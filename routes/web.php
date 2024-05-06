@@ -25,35 +25,35 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// Route::get('dashboard', function () {
-//     return view('dashboard');
-// })->name('dashboard');
 
-Route::controller(KriteriaController::class)->prefix('kriteria')->group(function() {
-    Route::get('', 'index')->name('kriteria');
-    Route::get('insert', 'add')->name('kriteria.insert');
-    Route::post('insert', 'insert')->name('kriteria.add.insert');
-    Route::get('edit/{id}', 'edit')->name('kriteria.edit');
-    Route::post('update/{id}', 'update')->name('kriteria.update');
-    Route::get('delete/{id}', 'delete')->name('kriteria.delete');
-});
+Route::middleware(['auth'])->group(function () {
+    Route::get('dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
-Route::controller(PendonorController::class)->prefix('pendonor')->group(function() {
-    Route::get('', 'index')->name('pendonor');
-    Route::get('insert', 'add')->name('pendonor.insert');
-    Route::post('insert', 'insert')->name('pendonor.add.insert');
-    Route::get('edit/{id}', 'edit')->name('pendonor.edit');
-    Route::post('update/{id}', 'update')->name('pendonor.update');
-    Route::get('delete/{id}', 'delete')->name('pendonor.delete');
-});
+    Route::prefix('kriteria')->group(function () {
+        Route::get('', [KriteriaController::class, 'index'])->name('kriteria');
+        Route::get('insert', [KriteriaController::class, 'add'])->name('kriteria.insert');
+        Route::post('insert', [KriteriaController::class, 'insert'])->name('kriteria.add.insert');
+        Route::get('edit/{id}', [KriteriaController::class, 'edit'])->name('kriteria.edit');
+        Route::post('update/{id}', [KriteriaController::class, 'update'])->name('kriteria.update');
+        Route::get('delete/{id}', [KriteriaController::class, 'delete'])->name('kriteria.delete');
+    });
 
-Route::controller(HasilController::class)->prefix('hasil')->group(function() {
-    Route::get('', 'index')->name('hasil');
-    Route::get('/hasil/pdf', 'HasilController@generatePdf')->name('hasil.pdf');
+    Route::prefix('pendonor')->group(function () {
+        Route::get('', [PendonorController::class, 'index'])->name('pendonor');
+        Route::get('insert', [PendonorController::class, 'add'])->name('pendonor.insert');
+        Route::post('insert', [PendonorController::class, 'insert'])->name('pendonor.add.insert');
+        Route::get('edit/{id}', [PendonorController::class, 'edit'])->name('pendonor.edit');
+        Route::post('update/{id}', [PendonorController::class, 'update'])->name('pendonor.update');
+        Route::get('delete/{id}', [PendonorController::class, 'delete'])->name('pendonor.delete');
+    });
+
+    Route::prefix('hasil')->group(function () {
+        Route::get('', [HasilController::class, 'index'])->name('hasil');
+        Route::get('/hasil/pdf', [HasilController::class, 'generatePdf'])->name('hasil.pdf');
+    });
 });
