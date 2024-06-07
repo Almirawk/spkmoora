@@ -13,13 +13,12 @@ return new class extends Migration
     {
         Schema::create('pendonors', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_pendonor');
-            $table->string('umur');
-            $table->string('tekanan_darah');
-            $table->string('berat_badan');
-            $table->string('hemoglobin');
-            $table->string('konsumsi_obat');
-            $table->string('tidur');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('alamat');
+            $table->date('tgl_lahir');
+            $table->enum('jns_kelamin', ['L', 'P']); // L untuk laki-laki, P untuk perempuan
+            $table->string('no_telepon');
             $table->timestamps();
         });
     }

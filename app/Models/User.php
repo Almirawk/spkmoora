@@ -21,7 +21,16 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'alamat', 
+        'tanggal_lahir', 
+        'jenis_kelamin', 
+        'no_telepon',
     ];
+
+    public function pendonor()
+    {
+        return $this->hasOne(Pendonor::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

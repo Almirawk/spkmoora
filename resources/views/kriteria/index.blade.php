@@ -28,9 +28,9 @@
                     <thead>
                         <tr class="text-center">
                             <th>No</th>
-                            <th>Kode</th>
                             <th>Nama Kriteria</th>
                             <th>Bobot</th>
+                            <th>Jenis</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -39,9 +39,9 @@
                         @foreach ($kriteria as $row)
                         <tr class="text-center">
                             <td>{{$no++}}</td>
-                            <td>{{$row->kode}}</td>
                             <td>{{$row->nama}}</td>
                             <td>{{$row->bobot}}</td>
+                            <td>{{$row->jenis}}</td>
                             <td>
                                 <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal{{ $row->id }}">
                                     <i class="fas fa-edit me-2"></i>Edit
@@ -65,10 +65,6 @@
                                         @method('POST')
                                         <div class="modal-body">
                                             <div class="form-group">
-                                                <label for="kode">Kode</label>
-                                                <input type="text" class="form-control" id="kode" name="kode" value="{{ $row->kode }}" required>
-                                            </div>
-                                            <div class="form-group">
                                                 <label for="nama">Nama Kriteria</label>
                                                 <input type="text" class="form-control" id="nama" name="nama" value="{{ $row->nama }}" required>
                                             </div>
@@ -76,6 +72,13 @@
                                                 <label for="bobot">Bobot</label>
                                                 <input type="text" class="form-control" id="bobot" name="bobot" value="{{ $row->bobot }}" required>
                                             </div>
+                                            <div class="form-group">
+                                                <label for="jenis">Jenis</label>
+                                                <select class="form-control" id="jenis" name="jenis" required>
+                                                    <option value="Benefit" {{ $row->jenis == 'Benefit' ? 'selected' : '' }}>Benefit</option>
+                                                    <option value="Cost" {{ $row->jenis == 'Cost' ? 'selected' : '' }}>Cost</option>
+                                                </select>
+                                            </div>                                            
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -106,10 +109,6 @@
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="kode">Kode</label>
-                            <input type="text" class="form-control" id="kode" name="kode" required>
-                        </div>
-                        <div class="form-group">
                             <label for="nama">Nama Kriteria</label>
                             <input type="text" class="form-control" id="nama" name="nama" required>
                         </div>
@@ -117,6 +116,13 @@
                             <label for="bobot">Bobot</label>
                             <input type="text" class="form-control" id="bobot" name="bobot" required>
                         </div>
+                        <div class="form-group">
+                            <label for="jenis">Jenis</label>
+                            <select class="form-control" id="jenis" name="jenis" required>
+                                <option value="Benefit" {{ $row->jenis == 'Benefit' ? 'selected' : '' }}>Benefit</option>
+                                <option value="Cost" {{ $row->jenis == 'Cost' ? 'selected' : '' }}>Cost</option>
+                            </select>
+                        </div> 
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

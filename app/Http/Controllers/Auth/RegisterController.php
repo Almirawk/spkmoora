@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use App\Models\Pendonor;
 
 class RegisterController extends Controller
 {
@@ -28,7 +30,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/dashboard';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -52,6 +54,10 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'alamat' => ['required', 'string', 'max:255'],
+            'tgl_lahir' => ['required', 'date'],
+            'jns_kelamin' => ['required', 'string'],
+            'no_telepon' => ['required', 'string', 'max:15'],
         ]);
     }
 
@@ -63,10 +69,24 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        return DB::transaction(function () use ($data) {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+    
+            Pendonor::create([
+                'user_id' => $user->id,
+                'alamat' => $data['alamat'],
+                'tgl_lahir' => $data['tgl_lahir'],
+                'jns_kelamin' => $data['jns_kelamin'],
+                'no_telepon' => $data['no_telepon'],
+            ]);
+    
+            return $user; // Perubahan: kembalikan instance User yang baru dibuat
+        });
+
+
     }
 }

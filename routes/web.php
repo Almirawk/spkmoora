@@ -4,6 +4,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HasilController;
 use App\Http\Controllers\PendonorController;
 use App\Http\Controllers\KriteriaController;
+use App\Http\Controllers\PemeriksaanController;
+use App\Models\Pemeriksaan;
+use App\Http\Controllers\RiwayatPemeriksaanController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,9 +24,7 @@ use Illuminate\Support\Facades\Auth;
 
 Auth::routes();
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [RiwayatPemeriksaanController::class, 'index'])->name('welcome');
 
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -51,9 +52,23 @@ Route::middleware(['auth'])->group(function () {
         Route::post('update/{id}', [PendonorController::class, 'update'])->name('pendonor.update');
         Route::get('delete/{id}', [PendonorController::class, 'delete'])->name('pendonor.delete');
     });
+ 
+    Route::prefix('pemeriksaan')->group(function () {
+        Route::get('', [PemeriksaanController::class, 'index'])->name('pemeriksaan');
+        Route::get('insert', [PemeriksaanController::class, 'add'])->name('pemeriksaan.insert');
+        Route::post('insert', [PemeriksaanController::class, 'insert'])->name('pemeriksaan.add.insert');
+        Route::get('edit/{id}', [PemeriksaanController::class, 'edit'])->name('pemeriksaan.edit');
+        Route::post('update/{id}', [PemeriksaanController::class, 'update'])->name('pemeriksaan.update');
+        Route::get('delete/{id}', [PemeriksaanController::class, 'delete'])->name('pemeriksaan.delete');
+        Route::post('/nilai/set', [PemeriksaanController::class, 'setNilai'])->name('nilai.set');
+    });
+    
+
 
     Route::prefix('hasil')->group(function () {
         Route::get('', [HasilController::class, 'index'])->name('hasil');
         Route::get('/hasil/pdf', [HasilController::class, 'generatePdf'])->name('hasil.pdf');
     });
+
 });
+

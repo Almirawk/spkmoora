@@ -23,15 +23,15 @@ class KriteriaController extends Controller
     public function insert(Request $request)
     {
         $request->validate([
-            'kode' => 'required', 
             'nama' => 'required',
             'bobot' => 'required',
+            'jenis' => 'required', 
         ]);
 
         Kriteria::create([
-            'kode' => $request->kode,
             'nama' => $request->nama,
             'bobot' => $request->bobot,
+            'jenis' => $request->jenis,
         ]);
 
         return redirect()->route('kriteria')->with('message', 'Data Berhasil Ditambahkan!');
@@ -47,16 +47,16 @@ class KriteriaController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'kode' => 'required',
             'nama' => 'required',
             'bobot' => 'required',
+            'jenis' => 'required',
         ]);
 
         $kriteria = Kriteria::find($id);
         $kriteria->update([
-            'kode' => $request->kode,
             'nama' => $request->nama,
             'bobot' => $request->bobot,
+            'jenis' => $request->jenis,
         ]);
 
         return redirect()->route('kriteria')->with('message', 'Data Berhasil Diupdate!');

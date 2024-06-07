@@ -1,12 +1,12 @@
 @extends('layout.app')
-@section('title', 'pendonor')
+@section('title', 'Pendonor')
 @section('content')
     
     <!-- Page Heading -->
     <h1 class="h3 mb-2 text-gray-800">Data Pendonor</h1>
 
     @if (session('message'))
-        <div class="alert alert-success alert-sidmissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{session('message')}}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
@@ -27,13 +27,11 @@
                     <thead>
                         <tr class="text-center">
                             <th>No</th>
-                            <th>Nama pendonor</th>
-                            <th>Umur</th>
-                            <th>Tekanan Darah</th>
-                            <th>Berat Badan</th>
-                            <th>Hemoglobin</th>
-                            <th>Konsumsi Obat</th>
-                            <th>Tidur</th>
+                            <th>Nama Pendonor</th>
+                            <th>Alamat</th>
+                            <th>Tanggal Lahir</th>
+                            <th>Jenis Kelamin</th>
+                            <th>No Telepon</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -42,13 +40,11 @@
                         @foreach ($pendonor as $row)
                         <tr class="text-center">
                             <td>{{$no++}}</td>
-                            <td>{{$row->nama_pendonor}}</td>
-                            <td>{{$row->umur}}</td>
-                            <td>{{$row->tekanan_darah}}</td>
-                            <td>{{$row->berat_badan}}</td>
-                            <td>{{$row->hemoglobin}}</td>
-                            <td>{{$row->konsumsi_obat}}</td>
-                            <td>{{$row->tidur}}</td>
+                            <td>{{$row->user->name}}</td>
+                            <td>{{$row->alamat}}</td>
+                            <td>{{$row->tgl_lahir}}</td>
+                            <td>{{$row->jns_kelamin== 1 ? 'Laki-Laki' : 'Perempuan'}}</td>
+                            <td>{{$row->no_telepon}}</td>
                             <td>
                                 <button type="button" class="btn btn-warning mb-2 btn-sm" data-toggle="modal" data-target="#editModal{{ $row->id }}">
                                     <i class="fas fa-edit"></i>Edit
@@ -76,28 +72,23 @@
                                                 <input type="text" class="form-control" id="nama_pendonor" name="nama_pendonor" value="{{ $row->nama_pendonor }}" required>
                                             </div>
                                             <div class="form-group">
-                                                <label for="umur">Umur</label>
-                                                <input type="number" class="form-control" id="umur" name="umur" value="{{ $row->umur }}" required>
+                                                <label for="alamat">Alamat</label>
+                                                <input type="text" class="form-control" id="alamat" name="alamat" value="{{ $row->alamat }}" required>
                                             </div>
                                             <div class="form-group">
-                                                <label for="tekanan_darah">Tekanan Darah</label>
-                                                <input type="text" class="form-control" id="tekanan_darah" name="tekanan_darah" value="{{ $row->tekanan_darah }}" required>
+                                                <label for="tgl_lahir">Tanggal Lahir</label>
+                                                <input type="date" class="form-control" id="tgl_lahir" name="tgl_lahir" value="{{ $row->tgl_lahir }}" required>
                                             </div>
                                             <div class="form-group">
-                                                <label for="berat_badan">Berat Badan</label>
-                                                <input type="text" class="form-control" id="berat_badan" name="berat_badan" value="{{ $row->berat_badan }}" required>
+                                                <label for="jns_kelamin">Jenis Kelamin</label>
+                                                <select class="form-control" id="jns_kelamin" name="jns_kelamin" required>
+                                                    <option value="0" {{ $row->jns_kelamin == '0' ? 'selected' : '' }}>Perempuan</option>
+                                                    <option value="1" {{ $row->jns_kelamin == '1' ? 'selected' : '' }}>Laki-Laki</option>
+                                                </select>
                                             </div>
                                             <div class="form-group">
-                                                <label for="hemoglobin">Hemoglobin</label>
-                                                <input type="text" class="form-control" id="hemoglobin" name="hemoglobin" value="{{ $row->hemoglobin }}" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="konsumsi_obat">Konsumsi Obat</label>
-                                                <input type="text" class="form-control" id="konsumsi_obat" name="konsumsi_obat" value="{{ $row->konsumsi_obat }}" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="tidur">Tidur</label>
-                                                <input type="text" class="form-control" id="tidur" name="tidur" value="{{ $row->tidur }}" required>
+                                                <label for="no_telepon">No Telepon</label>
+                                                <input type="text" class="form-control" id="no_telepon" name="no_telepon" value="{{ $row->no_telepon }}" required>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -116,55 +107,49 @@
     </div>
 
     <!-- Bootstrap Modal for Adding Data -->
-<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Data Pendonor</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Tambah Data Pendonor</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="POST" action="{{ route('pendonor.add.insert') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="nama_pendonor">Nama Pendonor</label>
+                            <input type="text" class="form-control" id="nama_pendonor" name="nama_pendonor" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="alamat">Alamat</label>
+                            <input type="text" class="form-control" id="alamat" name="alamat" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tgl_lahir">Tanggal Lahir</label>
+                            <input type="date" class="form-control" id="tgl_lahir" name="tgl_lahir" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jns_kelamin">Jenis Kelamin</label>
+                            <select class="form-control" id="jns_kelamin" name="jns_kelamin" required>
+                                <option value="0">Perempuan</option>
+                                <option value="1">Laki-Laki</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="no_telepon">No Telepon</label>
+                            <input type="text" class="form-control" id="no_telepon" name="no_telepon" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Tambah</button>
+                    </div>
+                </form>
             </div>
-            <form method="POST" action="{{ route('pendonor.add.insert') }}">
-                @csrf
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="nama_pendonor">Nama Pendonor</label>
-                        <input type="text" class="form-control" id="nama_pendonor" name="nama_pendonor" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="umur">Umur</label>
-                        <input type="number" class="form-control" id="umur" name="umur" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="tekanan_darah">Tekanan Darah</label>
-                        <input type="text" class="form-control" id="tekanan_darah" name="tekanan_darah" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="berat_badan">Berat Badan</label>
-                        <input type="text" class="form-control" id="berat_badan" name="berat_badan" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="hemoglobin">Hemoglobin</label>
-                        <input type="text" class="form-control" id="hemoglobin" name="hemoglobin" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="konsumsi_obat">Konsumsi Obat</label>
-                        <input type="text" class="form-control" id="konsumsi_obat" name="konsumsi_obat" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="tidur">Tidur</label>
-                        <input type="text" class="form-control" id="tidur" name="tidur" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Tambah</button>
-                </div>
-            </form>
         </div>
     </div>
-</div>
-
 
 @endsection

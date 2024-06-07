@@ -32,10 +32,10 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-secondary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav bg-white sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand bg-warning d-flex align-items-center justify-content-center" href="">
+            <a class="sidebar-brand bg-white d-flex align-items-center justify-content-center" href="">
                 <div class="sidebar-brand-icon ">
                     <img class="w-75" src="{{asset('template/img/Logo_PMI.png')}}" alt="">
                 </div>
@@ -44,12 +44,12 @@
             </a>
 
             <!-- Divider -->
-            <hr class="sidebar-divider my-0">
+            <hr class="sidebar-divider my-0" style="border-top: 2px solid #ff0000;">
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="{{route('dashboard')}}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                <a class="nav-link text-danger" href="{{route('dashboard')}}">
+                    <i class="fas fa-fw fa-tachometer-alt" style="color: red;"></i>
                     <span>Dashboard</span></a>
             </li>
 
@@ -57,8 +57,17 @@
             <hr class="sidebar-divider">
 
             <li class="nav-item">
-                <a class="nav-link" href="{{route('kriteria')}}">
-                    <i class="fas fa-fw fa-wrench"></i>
+                <a class="nav-link text-danger" href="{{route('pendonor')}}">
+                    <i class="fas fa-fw fa-users" style="color: red;"></i>
+                    <span>Data Pendonor</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <li class="nav-item">
+                <a class="nav-link text-danger" href="{{route('kriteria')}}">
+                    <i class="fas fa-fw fa-list" style="color: red;"></i>
                     <span>Kriteria</span></a>
             </li>
 
@@ -66,14 +75,17 @@
             <hr class="sidebar-divider">
 
             <li class="nav-item">
-                <a class="nav-link" href="{{route('pendonor')}}">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Data Pendonor</span></a>
+                <a class="nav-link text-danger" href="{{route('pemeriksaan')}}">
+                    <i class="fas fa-fw fa-stethoscope" style="color: red;"></i>
+                    <span>Data Pemeriksaan</span></a>
             </li>
 
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            
             <li class="nav-item">
-                <a class="nav-link" href="{{route('hasil')}}">
-                    <i class="fas fa-fw fa-wrench"></i>
+                <a class="nav-link text-danger" href="{{route('hasil')}}">
+                    <i class="fas fa-fw fa-file-alt" style="color: red;"></i>
                     <span>Hasil</span></a>
             </li>
 
@@ -116,7 +128,7 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                {{-- <a class="dropdown-item" href="#">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
@@ -127,8 +139,8 @@
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Activity Log
-                                </a>
-                                <div class="dropdown-divider"></div>
+                                </a> --}}
+                                {{-- <div class="dropdown-divider"></div> --}}
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
@@ -186,7 +198,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <  <a class="dropdown-item" href="{{ route('logout') }}"
+                     <a class="dropdown-item" href="{{ route('logout') }}"
                     onclick="event.preventDefault();
                                   document.getElementById('logout-form').submit();">
                      {{ __('Logout') }}

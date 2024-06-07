@@ -5,14 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class kriteria extends Model
+class RiwayatPemeriksaan extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama', 'bobot', 'jenis'];
+    public function pendonor()
+    {
+        return $this->belongsTo(Pendonor::class);
+    }
 
-    public function pemeriksaans()
+    public function pemeriksaan()
     {
         return $this->hasMany(Pemeriksaan::class);
     }
 }
+

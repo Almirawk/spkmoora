@@ -9,6 +9,26 @@ class pendonor extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama_pendonor', 'umur', 'tekanan_darah', 'berat_badan', 'hemoglobin', 'konsumsi_obat', 'tidur'];
+    protected $fillable = [
+        'user_id',
+        'alamat',
+        'tgl_lahir',
+        'jns_kelamin',
+        'no_telepon',
+    ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function pemeriksaans()
+    {
+        return $this->hasMany(Pemeriksaan::class);
+    }
+
+    public function riwayatPemeriksaans()
+    {
+        return $this->hasMany(RiwayatPemeriksaan::class);
+    }
 }
