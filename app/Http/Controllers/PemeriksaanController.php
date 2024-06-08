@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pemeriksaan;
 use App\Models\Kriteria;
 use App\Models\pendonor;
+use App\Models\Hasil;
 use Illuminate\Http\Request;
 
 class PemeriksaanController extends Controller
@@ -31,6 +32,13 @@ class PemeriksaanController extends Controller
         }
 
         return redirect()->route('pemeriksaan')->with('message', 'Nilai Berhasil Disimpan!');
+    }
+
+    public function detailRiwayat()
+    {
+        $hasilPerhitungan = Hasil::with(['pendonor', 'pendonor.pemeriksaans'])->get();
+
+        return view('pemeriksaan.detail_riwayat', compact('hasilPerhitungan'));
     }
 
 

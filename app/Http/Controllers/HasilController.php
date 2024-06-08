@@ -110,6 +110,107 @@ class HasilController extends Controller
         return view('hasil.index', compact('hasilAkhir'));
     }
 
+    public function simpan()
+    {
+        // Mengambil semua pendonor, kriteria, dan pemeriksaan dari database
+    $pendonors = Pendonor::all();
+    $kriterias = Kriteria::all();
+    $pemeriksaans = Pemeriksaan::all();
+    $bobot = [];
+    $namaKriterias = [];
+
+    // Membuat array asosiatif untuk menyimpan bobot dan nama kriteria
+    foreach ($kriterias as $kriteria) {
+        $bobot[$kriteria->id] = $kriteria->bobot;
+        $namaKriterias[$kriteria->id] = $kriteria->nama;
+    }
+
+    // Array untuk menyimpan hasil konversi pendonor yang lolos validasi
+    $hasilKonversi = [];
+
+    // Looping melalui setiap pendonor
+    foreach ($pendonors as $pendonor) {
+        // Mendapatkan nilai pemeriksaan untuk pendonor saat ini
+        $nilaiPendonor = $pemeriksaans->where('pendonor_id', $pendonor->id);
+        $nilaiKriteria = [];
+
+        // Memeriksa apakah pendonor lolos validasi
+        if ($this->validasiKriteria($nilaiPendonor, $namaKriterias)) {
+            // Looping melalui setiap kriteria
+            foreach ($kriterias as $kriteria) {
+                // Mendapatkan nilai untuk kriteria saat ini
+                $nilai = $nilaiPendonor->where('kriteria_id', $kriteria->id)->first()->nilai ?? '-';
+                
+                // Melakukan konversi nilai sesuai dengan jenis kriteria
+                if ($kriteria->nama == 'Tekanan Darah') {
+                    $nilai = $this->konversiTekananDarah($nilai);
+                } elseif ($kriteria->nama == 'Hemoglobin') {
+                    $nilai = $this->konversiHemoglobin($nilai);
+                } elseif ($kriteria->nama == 'Berat Badan') {
+                    $nilai = $this->konversiBeratBadan($nilai);
+                } else{
+                    $nilai = is_numeric($nilai) ? floatval($nilai) : 0;
+                }
+
+                // Menyimpan nilai konversi untuk kriteria saat ini
+                $nilaiKriteria[$kriteria->id] = $nilai;
+            }
+
+            // Menyimpan hasil konversi pendonor yang lolos validasi
+            $hasilKonversi[] = [
+                'nama_pendonor' => $pendonor->user->name,
+                'nilai_kriteria' => $nilaiKriteria,
+            ];
+        }
+    }
+
+       
+
+        $matriksKeputusan = [];
+        foreach ($hasilKonversi as $hasil) {
+            $baris = [];
+            foreach ($kriterias as $kriteria) {
+                $baris[] = $hasil['nilai_kriteria'][$kriteria->id];
+            }
+            $matriksKeputusan[] = $baris;
+        }
+
+        // Normalisasi Matriks Keputusan
+        $matriksNormalisasi = $this->normalisasiMatriks($matriksKeputusan);
+        
+        // Hitung nilai MOORA untuk setiap alternatif
+        $nilaiMoora = $this->hitungMoora($matriksNormalisasi, $kriterias);
+        
+        // Menyusun hasil akhir dengan nama pendonor
+        $hasilAkhir = [];
+        foreach ($hasilKonversi as $index => $hasil) {
+            $hasilAkhir[] = [
+                'nama_pendonor' => $hasil['nama_pendonor'],
+                'nilai_moora' => $nilaiMoora[$index],
+            ];
+        }
+
+        // Mengurutkan hasil akhir berdasarkan nilai MOORA (descending)
+        usort($hasilAkhir, function ($a, $b) {
+            return $b['nilai_moora'] <=> $a['nilai_moora'];
+        });
+
+        foreach ($hasilAkhir as $hasil) {
+            Hasil::create([
+                'nama' => $hasil['nama_pendonor'],
+                'hasil' => $hasil['nilai_moora'],
+                'created_at' => now(), // Tanggal dan waktu saat ini
+            ]);
+        }
+
+        
+        // dd($hasilAkhir);
+
+        return view('hasil.index', compact('hasilAkhir'));
+    }
+
+    
+
     private function validasiKriteria($nilaiPendonor, $namaKriterias)
 {
     // Inisialisasi status validasi
@@ -292,20 +393,36 @@ class HasilController extends Controller
 
 
 
-    public function generatePdf()
-    {
-        $hasil = Hasil::all();
+public function generateRiwayatPdf($datetime)
+{
+    
+    $hasil = Hasil::where('created_at', $datetime)->get();
+    $pdfView = view('hasil.pdf', compact('hasil'));
 
-        // menampilkan ke dalam variabel
-        $pdfView = view('hasil.pdf', compact('hasil'));
+    $dompdf = new Dompdf();
+    $dompdf->loadHtml($pdfView);
 
-        $dompdf = new Dompdf();
-        $dompdf->loadHtml($pdfView);
+    $dompdf->setPaper('A4', 'landscape');
 
-        $dompdf->setPaper('A4', 'landscape');
+    $dompdf->render();
 
-        $dompdf->render();
+    return $dompdf->stream("riwayat_perhitungan.pdf");
+}
 
-        return $dompdf->stream("hasil.pdf");
-    }
+    public function riwayat()
+{
+    $riwayat = Hasil::orderBy('created_at', 'desc')->get()->groupBy(function($date) {
+        return \Carbon\Carbon::parse($date->created_at)->format('Y-m-d H:i:s');
+    });
+
+    return view('hasil.riwayat', compact('riwayat'));
+}
+public function detailRiwayat($datetime)
+{
+    $hasilPerhitungan = Hasil::where('created_at', 'like', $datetime . '%')->get();
+
+    return view('hasil.detail_riwayat', compact('hasilPerhitungan'));
+}
+
+
 }

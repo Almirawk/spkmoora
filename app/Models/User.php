@@ -21,10 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'alamat', 
-        'tanggal_lahir', 
-        'jenis_kelamin', 
-        'no_telepon',
+        'role'
     ];
 
     public function pendonor()

@@ -88,6 +88,11 @@
                     <i class="fas fa-fw fa-file-alt" style="color: red;"></i>
                     <span>Hasil</span></a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link text-danger" href="{{route('riwayat')}}">
+                    <i class="fas fa-fw fa-file-alt" style="color: red;"></i>
+                    <span>riwayat</span></a>
+            </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">

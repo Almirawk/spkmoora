@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HasilController;
 use App\Http\Controllers\PendonorController;
@@ -24,16 +25,16 @@ use Illuminate\Support\Facades\Auth;
 
 Auth::routes();
 
-Route::get('/', [RiwayatPemeriksaanController::class, 'index'])->name('welcome');
+
 
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/', [RiwayatPemeriksaanController::class, 'index'])->name('welcome');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 
     Route::prefix('kriteria')->group(function () {
         Route::get('', [KriteriaController::class, 'index'])->name('kriteria');
@@ -67,7 +68,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('hasil')->group(function () {
         Route::get('', [HasilController::class, 'index'])->name('hasil');
-        Route::get('/hasil/pdf', [HasilController::class, 'generatePdf'])->name('hasil.pdf');
+        Route::post('/hasil/simpan', [HasilController::class,'simpan'])->name('hasil.simpan');
+        Route::get('/riwayat', [HasilController::class,'riwayat'])->name('riwayat');
+        Route::get('/riwayat/pdf/{datetime}', [HasilController::class, 'generateRiwayatPdf'])->name('riwayat.pdf');
+        Route::get('/riwayat/detail/{datetime}', [HasilController::class, 'detailRiwayat'])->name('riwayat.detail');
+
     });
 
 });

@@ -17,8 +17,14 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <a href="{{ route('hasil.pdf') }}" class="btn btn-primary btn-sm"><i class="fas fa-file-pdf me-2"></i>Cetak PDF</a>
+            <form action="{{ route('hasil.simpan') }}" method="POST">
+                @csrf
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="fas fa-save me-2"></i>Simpan Perhitungan
+                </button>
+            </form>
         </div>
+        
         
         <div class="card-body">
             <div class="table-responsive">
