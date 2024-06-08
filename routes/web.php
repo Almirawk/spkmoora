@@ -6,6 +6,7 @@ use App\Http\Controllers\HasilController;
 use App\Http\Controllers\PendonorController;
 use App\Http\Controllers\KriteriaController;
 use App\Http\Controllers\PemeriksaanController;
+use App\Http\Controllers\DetailRiwayatController;
 use App\Models\Pemeriksaan;
 use App\Http\Controllers\RiwayatPemeriksaanController;
 use Illuminate\Support\Facades\Route;
@@ -72,6 +73,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/riwayat', [HasilController::class,'riwayat'])->name('riwayat');
         Route::get('/riwayat/pdf/{datetime}', [HasilController::class, 'generateRiwayatPdf'])->name('riwayat.pdf');
         Route::get('/riwayat/detail/{datetime}', [HasilController::class, 'detailRiwayat'])->name('riwayat.detail');
+        Route::get('riwayat/{id}', [DetailRiwayatController::class, 'show'])->name('riwayat.show');
 
     });
 
