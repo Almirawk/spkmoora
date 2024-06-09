@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('hasils', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
+            $table->unsignedBigInteger('pendonor_id');
+            $table->foreign('pendonor_id')->references('id')->on('pendonors');
             $table->string('hasil');
             $table->timestamps();
         });

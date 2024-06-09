@@ -32,11 +32,10 @@ Auth::routes();
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 
+Route::get('/', [RiwayatPemeriksaanController::class, 'index'])->name('welcome');
+
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', [RiwayatPemeriksaanController::class, 'index'])->name('welcome');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-
     Route::prefix('kriteria')->group(function () {
         Route::get('', [KriteriaController::class, 'index'])->name('kriteria');
         Route::get('insert', [KriteriaController::class, 'add'])->name('kriteria.insert');

@@ -31,4 +31,12 @@ class pendonor extends Model
     {
         return $this->hasMany(RiwayatPemeriksaan::class);
     }
+    public function hasils()
+    {
+        return $this->hasMany(Hasil::class, 'pendonor_id');
+    }
+    public function pemeriksaan()
+    {
+        return $this->hasMany(Pemeriksaan::class, 'pendonor_id');
+    }
 }

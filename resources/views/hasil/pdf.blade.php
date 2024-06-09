@@ -17,6 +17,14 @@
         th {
             background-color: #f2f2f2;
         }
+        .subtable {
+            border-collapse: collapse;
+            margin-bottom: 5px;
+        }
+        .subtable th, .subtable td {
+            border: 1px solid #ddd;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
@@ -26,6 +34,7 @@
             <tr>
                 <th>Tanggal</th>
                 <th>Nama Pendonor</th>
+                <th>Pemeriksaan</th>
                 <th>Hasil Perhitungan</th>
             </tr>
         </thead>
@@ -33,7 +42,25 @@
             @foreach ($hasil as $item)
                 <tr>
                     <td>{{ $item->created_at }}</td>
-                    <td>{{ $item->nama }}</td>
+                    <td>{{ $item->pendonor->user->name }}</td>
+                    <td>
+                        <table class="subtable">
+                            <thead>
+                                <tr>
+                                    <th>Kriteria</th>
+                                    <th>Nilai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($item->pendonor->pemeriksaan as $pemeriksaan)
+                                    <tr>
+                                        <td>{{ $pemeriksaan->kriteria->nama }}</td>
+                                        <td>{{ $pemeriksaan->nilai }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </td>
                     <td>{{ $item->hasil }}</td>
                 </tr>
             @endforeach

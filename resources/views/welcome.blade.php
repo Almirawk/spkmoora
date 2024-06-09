@@ -1,55 +1,52 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bootstrap demo</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-</head>
-<body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Your Website</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        @if (Route::has('login'))
-          @auth
-            @if (auth()->user()->roles != 'admin')
-              <li class="nav-item">
-                <a href="{{ route('logout') }}" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
-              </li>
-            @else
-              <li class="nav-item">
-                <a href="{{ url('/home') }}" class="nav-link">Home</a>
-              </li>
-              <li class="nav-item">
-                <a href="{{ route('logout') }}" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
-              </li>
+
+@if (!Auth::check())
+@extends('layouts.app')
+
+@section('content')
+<div class="container" style="background-color: #F44336; height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+        <div style="text-align: center; margin-bottom: 20px;">
+            
+            <img src="{{asset('template/img/Logo_PMI.png')}}" alt="" style="width: 100px;">
+        </div>
+        <h2 style="text-align: center; margin-bottom: 20px;">Selamat Datang</h2>
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                @error('email')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                @error('password')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+            <div class="form-group form-check">
+                <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                <label class="form-check-label" for="remember">Remember Me</label>
+            </div>
+            <button type="submit" class="btn btn-primary" style="background-color: #F44336; border: none; width: 100%; padding: 10px; border-radius: 5px;">Login</button>
+            @if (Route::has('password.request'))
+                <a class="btn btn-link" href="{{ route('password.request') }}">Forgot Your Password?</a>
             @endif
-          @else
-            <li class="nav-item">
-              <a href="{{ route('login') }}" class="nav-link">Log in</a>
-            </li>
-            @if (Route::has('register'))
-              <li class="nav-item">
-                <a href="{{ route('register') }}" class="nav-link">Register</a>
-              </li>
-            @endif
-          @endauth
-        @endif
-      </ul>
+        </form>
     </div>
-  </div>
-</nav>
+</div>
+@endsection
 
-@auth
-    
+@else
+
+@section('content')
 <div class="container mt-5">
   <div class="card shadow mb-4">
     <div class="card-body">
@@ -103,8 +100,7 @@
     </div>
   </div>
 </div>
-@endauth
+@endsection
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
-</html>
+
+@endif

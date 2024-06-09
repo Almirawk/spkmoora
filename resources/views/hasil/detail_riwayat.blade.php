@@ -10,6 +10,7 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Pendonor</th>
+                            <th>Pemeriksaan</th>
                             <th>Hasil</th>
                         </tr>
                     </thead>
@@ -17,7 +18,25 @@
                         @foreach ($hasilPerhitungan as $index => $hasil)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $hasil->nama }}</td>
+                                <td>{{ $hasil->pendonor->user->name }}</td>
+                                <td>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Kriteria</th>
+                                                <th>Nilai</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($hasil->pendonor->pemeriksaan as $pemeriksaan)
+                                                <tr>
+                                                    <td>{{ $pemeriksaan->kriteria->nama }}</td>
+                                                    <td>{{ $pemeriksaan->nilai }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </td>
                                 <td>{{ $hasil->hasil }}</td>
                             </tr>
                         @endforeach

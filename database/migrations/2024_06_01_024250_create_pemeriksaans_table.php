@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('pendonor_id')->references('id')->on('pendonors')->onDelete('cascade');
             $table->unsignedBigInteger('kriteria_id');
             $table->foreign('kriteria_id')->references('id')->on('kriterias')->onDelete('cascade');
-            $table->decimal('nilai', 5, 2);
+            $table->string('nilai');
             $table->timestamps();
         });
         

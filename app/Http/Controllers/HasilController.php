@@ -25,7 +25,7 @@ class HasilController extends Controller
         $bobot[$kriteria->id] = $kriteria->bobot;
         $namaKriterias[$kriteria->id] = $kriteria->nama;
     }
-
+    
     // Array untuk menyimpan hasil konversi pendonor yang lolos validasi
     $hasilKonversi = [];
 
@@ -62,6 +62,7 @@ class HasilController extends Controller
                 'nama_pendonor' => $pendonor->user->name,
                 'nilai_kriteria' => $nilaiKriteria,
             ];
+            
         }
     }
 
@@ -78,7 +79,7 @@ class HasilController extends Controller
 
         // Normalisasi Matriks Keputusan
         $matriksNormalisasi = $this->normalisasiMatriks($matriksKeputusan);
-        
+       
         // Hitung nilai MOORA untuk setiap alternatif
         $nilaiMoora = $this->hitungMoora($matriksNormalisasi, $kriterias);
         
@@ -158,14 +159,11 @@ class HasilController extends Controller
 
             // Menyimpan hasil konversi pendonor yang lolos validasi
             $hasilKonversi[] = [
-                'nama_pendonor' => $pendonor->user->name,
+                'pendonor_id' => $pendonor->id, // Ubah 'nama_pendonor' menjadi 'pendonor_id'
                 'nilai_kriteria' => $nilaiKriteria,
             ];
         }
     }
-
-       
-
         $matriksKeputusan = [];
         foreach ($hasilKonversi as $hasil) {
             $baris = [];
@@ -185,10 +183,11 @@ class HasilController extends Controller
         $hasilAkhir = [];
         foreach ($hasilKonversi as $index => $hasil) {
             $hasilAkhir[] = [
-                'nama_pendonor' => $hasil['nama_pendonor'],
+                'pendonor_id' => $hasil['pendonor_id'],
                 'nilai_moora' => $nilaiMoora[$index],
             ];
         }
+        
 
         // Mengurutkan hasil akhir berdasarkan nilai MOORA (descending)
         usort($hasilAkhir, function ($a, $b) {
@@ -197,7 +196,7 @@ class HasilController extends Controller
 
         foreach ($hasilAkhir as $hasil) {
             Hasil::create([
-                'nama' => $hasil['nama_pendonor'],
+                'pendonor_id' => $hasil['pendonor_id'], // Ubah 'nama' menjadi 'pendonor_id'
                 'hasil' => $hasil['nilai_moora'],
                 'created_at' => now(), // Tanggal dan waktu saat ini
             ]);
@@ -206,7 +205,7 @@ class HasilController extends Controller
         
         // dd($hasilAkhir);
 
-        return view('hasil.index', compact('hasilAkhir'));
+        return redirect()->back()->with('message', 'Hasil perhitungan berhasil disimpan');
     }
 
     

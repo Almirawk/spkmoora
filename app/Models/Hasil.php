@@ -9,5 +9,10 @@ class Hasil extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama', 'hasil'];
+    protected $fillable = ['pendonor_id', 'hasil'];
+
+    public function pendonor()
+    {
+        return $this->belongsTo(Pendonor::class, 'pendonor_id');
+    }
 }
