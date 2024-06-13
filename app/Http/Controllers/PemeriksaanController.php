@@ -33,6 +33,44 @@ class PemeriksaanController extends Controller
         return redirect()->route('pemeriksaan')->with('message', 'Nilai Berhasil Disimpan!');
     }
 
+    public function updateNilai(Request $request)
+    {
+        $pendonorId = $request->input('pendonor_id');
+        $nilaiData = $request->input('nilai');
+
+        foreach ($nilaiData as $kriteriaId => $nilai) {
+            $pemeriksaan = Pemeriksaan::where('pendonor_id', $pendonorId)
+                                      ->where('kriteria_id', $kriteriaId)
+                                      ->first();
+            
+            if ($pemeriksaan) {
+                $pemeriksaan->nilai = $nilai;
+                $pemeriksaan->save();
+            } else {
+                Pemeriksaan::create([
+                    'pendonor_id' => $pendonorId,
+                    'kriteria_id' => $kriteriaId,
+                    'nilai' => $nilai,
+                ]);
+            }
+        }
+
+        return redirect()->route('pemeriksaan')->with('message', 'Nilai berhasil diupdate.');
+    }
+
+    // public function destroyValues($pendonor_id)
+    // {
+    //     // Find the pendonor
+    //     $pendonor = Pendonor::findOrFail($pendonor_id);
+
+    //     // Delete pemeriksaan values associated with this pendonor
+    //     $pendonor->pemeriksaans()->delete();
+
+    //     // Redirect back with a success message
+    //     return redirect()->back()->with('message', 'Pemeriksaan values deleted successfully.');
+    // }
+
+
 
 
     // public function add()

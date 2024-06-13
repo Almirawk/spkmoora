@@ -36,18 +36,17 @@
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand bg-white d-flex align-items-center justify-content-center" href="">
-                <div class="sidebar-brand-icon ">
-                    <img class="w-75" src="{{asset('template/img/Logo_PMI.png')}}" alt="">
+                <div class="sidebar-brand-icon d-flex align-items-center justify-content-between w-100">
+                    <img class="w-50" src="{{asset('template/img/Logo_PMI.png')}}" alt="">
+                    <img class="w-50" src="{{asset('template/img/Logo_UAA.png')}}" alt="">
                 </div>
-
-                {{-- <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div> --}}
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0" style="border-top: 2px solid #ff0000;">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item">
+            <li class="nav-item {{ Request::route()->getName() == 'dashboard' ? 'active' : '' }}">
                 <a class="nav-link text-danger" href="{{route('dashboard')}}">
                     <i class="fas fa-fw fa-tachometer-alt" style="color: red;"></i>
                     <span>Dashboard</span></a>
@@ -56,7 +55,7 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <li class="nav-item">
+            <li class="nav-item {{ Request::route()->getName() == 'pendonor' ? 'active' : '' }}">
                 <a class="nav-link text-danger" href="{{route('pendonor')}}">
                     <i class="fas fa-fw fa-users" style="color: red;"></i>
                     <span>Data Pendonor</span></a>
@@ -65,7 +64,7 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <li class="nav-item">
+            <li class="nav-item {{ Request::route()->getName() == 'kriteria' ? 'active' : '' }}">
                 <a class="nav-link text-danger" href="{{route('kriteria')}}">
                     <i class="fas fa-fw fa-list" style="color: red;"></i>
                     <span>Kriteria</span></a>
@@ -74,7 +73,7 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <li class="nav-item">
+            <li class="nav-item {{ Request::route()->getName() == 'pemeriksaan' ? 'active' : '' }}">
                 <a class="nav-link text-danger" href="{{route('pemeriksaan')}}">
                     <i class="fas fa-fw fa-stethoscope" style="color: red;"></i>
                     <span>Data Pemeriksaan</span></a>
@@ -83,15 +82,15 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
             
-            <li class="nav-item">
+            <li class="nav-item {{ Request::route()->getName() == 'hasil' ? 'active' : '' }}">
                 <a class="nav-link text-danger" href="{{route('hasil')}}">
                     <i class="fas fa-fw fa-file-alt" style="color: red;"></i>
-                    <span>Hasil</span></a>
+                    <span>Hasil Perhitungan</span></a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {{ Request::route()->getName() == 'riwayat' ? 'active' : '' }}">
                 <a class="nav-link text-danger" href="{{route('riwayat')}}">
-                    <i class="fas fa-fw fa-file-alt" style="color: red;"></i>
-                    <span>riwayat</span></a>
+                    <i class="fas fa-fw fa-history" style="color: red;"></i>
+                    <span>Riwayat Perhitungan</span></a>
             </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
@@ -172,7 +171,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
+                        <span>Copyright &copy; Almira Wulan Kinasih (203200161)</span>
                     </div>
                 </div>
             </footer>

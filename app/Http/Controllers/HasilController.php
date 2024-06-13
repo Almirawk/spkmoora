@@ -356,35 +356,35 @@ class HasilController extends Controller
     }
 
     private function hitungMoora($matriksNormalisasi, $kriterias)
-{
-    $nilaiMoora = [];
+    {
+        $nilaiMoora = [];
 
-    foreach ($matriksNormalisasi as $i => $nilai) {
-        $totalBenefit = 0;
-        $totalCost = 0;
+        foreach ($matriksNormalisasi as $i => $nilai) {
+            $totalBenefit = 0;
+            $totalCost = 0;
 
-        foreach ($nilai as $j => $v) {
-            // Ambil bobot dan jenis kriteria (benefit atau cost)
-            $bobot = $kriterias[$j]->bobot;
-            $jenis = $kriterias[$j]->jenis;
+            foreach ($nilai as $j => $v) {
+                // Ambil bobot dan jenis kriteria (benefit atau cost)
+                $bobot = $kriterias[$j]->bobot;
+                $jenis = $kriterias[$j]->jenis;
 
-            // Konversi bobot menjadi float (jika perlu)
-            $bobot = floatval(str_replace(',', '.', $bobot));
+                // Konversi bobot menjadi float (jika perlu)
+                $bobot = floatval(str_replace(',', '.', $bobot));
 
-            // Perhitungan total nilai benefit dan cost
-            if ($jenis == 'Benefit') {
-                $totalBenefit += $v * $bobot;
-            } elseif ($jenis == 'Cost') {
-                $totalCost += $v * $bobot;
+                // Perhitungan total nilai benefit dan cost
+                if ($jenis == 'Benefit') {
+                    $totalBenefit += $v * $bobot;
+                } elseif ($jenis == 'Cost') {
+                    $totalCost += $v * $bobot;
+                }
             }
+
+            // Hitung nilai MOORA dengan mengurangkan total cost dari total benefit
+            $nilaiMoora[] = $totalBenefit - $totalCost;
         }
 
-        // Hitung nilai MOORA dengan mengurangkan total cost dari total benefit
-        $nilaiMoora[] = $totalBenefit - $totalCost;
+        return $nilaiMoora;
     }
-
-    return $nilaiMoora;
-}
 
 
 

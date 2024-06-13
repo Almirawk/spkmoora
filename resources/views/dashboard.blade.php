@@ -38,7 +38,7 @@
                         <span class="h2 font-weight-bold mb-0">{{ $jumlah_pendonor }}</span>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -47,11 +47,11 @@
             <div class="card border-left-success shadow">
                 <div class="card-body">
                     <div>
-                        <h5 class="card-title text-uppercase text-muted mb-0">Jumlah Kriteria</h5>
+                        <h5 class="card-title text-uppercase text-muted mb-0">Jumlah <p class="mb-0">Kriteria</p></h5>
                         <span class="h2 font-weight-bold mb-0">{{ $jumlah_kriteria }}</span>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        <i class="fas fa-list fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -64,7 +64,7 @@
                         <span class="h2 font-weight-bold mb-0">{{ $jumlah_pemeriksaan }}</span>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        <i class="fas fa-stethoscope fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -73,11 +73,11 @@
             <div class="card border-left-info shadow">
                 <div class="card-body">
                     <div>
-                        <h5 class="card-title text-uppercase text-muted mb-0">Jumlah Hasil</h5>
+                        <h5 class="card-title text-uppercase text-muted mb-0">Jumlah <p class="mb-0">Hasil</p></h5>
                         <span class="h2 font-weight-bold mb-0">{{ $jumlah_hasil }}</span>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        <i class="fas fa-file-alt fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>

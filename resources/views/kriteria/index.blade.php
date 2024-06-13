@@ -40,7 +40,7 @@
                         <tr class="text-center">
                             <td>{{$no++}}</td>
                             <td>{{$row->nama}}</td>
-                            <td>{{$row->bobot}}</td>
+                            <td>{{$row->bobot * 100}}%</td>
                             <td>{{$row->jenis}}</td>
                             <td>
                                 <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal{{ $row->id }}">

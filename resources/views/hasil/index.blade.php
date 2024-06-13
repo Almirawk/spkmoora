@@ -31,7 +31,7 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr class="text-center">
-                            <th>No</th>
+                            <th>Ranking</th>
                             <th>Nama Pendonor</th>
                             <th>Hasil</th>
                         </tr>

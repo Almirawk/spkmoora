@@ -29,19 +29,21 @@
 </head>
 <body>
     <h1>Riwayat Perhitungan</h1>
+    
     <table>
         <thead>
             <tr>
-                <th>Tanggal</th>
+                <th>Rangking</th>
                 <th>Nama Pendonor</th>
                 <th>Pemeriksaan</th>
                 <th>Hasil Perhitungan</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($hasil as $item)
+            @foreach ($hasil as $index => $item)
                 <tr>
-                    <td>{{ $item->created_at }}</td>
+                    <td>{{ $index + 1 }}</td>
+                    {{-- <td>{{ $item->created_at }}</td> --}}
                     <td>{{ $item->pendonor->user->name }}</td>
                     <td>
                         <table class="subtable">

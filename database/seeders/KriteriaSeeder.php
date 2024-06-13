@@ -18,7 +18,7 @@ class KriteriaSeeder extends Seeder
             ['nama' => 'Berat Badan', 'bobot' => 0.15, 'jenis' => 'Benefit'],
             ['nama' => 'Hemoglobin', 'bobot' => 0.25, 'jenis' => 'Benefit'],
             ['nama' => 'Tidak Konsumsi Obat', 'bobot' => 0.15, 'jenis' => 'Benefit'],
-            ['nama' => 'Umur', 'bobot' => 0.1, 'jenis' => 'Benefit'],
+            ['nama' => 'Umur', 'bobot' => 0.1, 'jenis' => 'Cost'],
             ['nama' => 'Lamanya Terakhir Tidur', 'bobot' => 0.05, 'jenis' => 'Benefit'],
             ['nama' => 'Riwayat Penyakit', 'bobot' => 0.05, 'jenis' => 'Benefit'],
         ];

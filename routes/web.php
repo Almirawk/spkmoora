@@ -62,6 +62,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('update/{id}', [PemeriksaanController::class, 'update'])->name('pemeriksaan.update');
         Route::get('delete/{id}', [PemeriksaanController::class, 'delete'])->name('pemeriksaan.delete');
         Route::post('/nilai/set', [PemeriksaanController::class, 'setNilai'])->name('nilai.set');
+        Route::post('/nilai/update', [PemeriksaanController::class, 'updateNilai'])->name('nilai.update');
+        // Route::delete('/pendonor/{id}', [PendonorController::class, 'destroy'])->name('pendonor.destroy');
+
     });
     
 

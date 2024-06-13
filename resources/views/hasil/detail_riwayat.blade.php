@@ -8,7 +8,7 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th>Ranking</th>
                             <th>Nama Pendonor</th>
                             <th>Pemeriksaan</th>
                             <th>Hasil</th>

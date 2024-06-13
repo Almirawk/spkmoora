@@ -16,11 +16,11 @@
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
+        {{-- <div class="card-header py-3">
             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addModal">
                 <i class="fas fa-plus me-3"></i>Tambah
             </button>
-        </div>
+        </div> --}}
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -32,7 +32,7 @@
                             <th>Tanggal Lahir</th>
                             <th>Jenis Kelamin</th>
                             <th>No Telepon</th>
-                            <th>Action</th>
+                            {{-- <th>Action</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -45,16 +45,16 @@
                             <td>{{$row->tgl_lahir}}</td>
                             <td>{{$row->jns_kelamin== 1 ? 'Laki-Laki' : 'Perempuan'}}</td>
                             <td>{{$row->no_telepon}}</td>
-                            <td>
+                            {{-- <td>
                                 <button type="button" class="btn btn-warning mb-2 btn-sm" data-toggle="modal" data-target="#editModal{{ $row->id }}">
                                     <i class="fas fa-edit"></i>Edit
                                 </button>
                                 <a href="{{route('pendonor.delete', $row->id)}}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i>Delete</a>
-                            </td>
+                            </td> --}}
                         </tr>
 
                         <!-- Bootstrap Modals for Editing Data -->
-                        <div class="modal fade" id="editModal{{ $row->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ $row->id }}" aria-hidden="true">
+                        {{-- <div class="modal fade" id="editModal{{ $row->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ $row->id }}" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -98,7 +98,7 @@
                                     </form>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         @endforeach
                     </tbody>
                 </table>
@@ -107,7 +107,7 @@
     </div>
 
     <!-- Bootstrap Modal for Adding Data -->
-    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    {{-- <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -150,6 +150,6 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 
 @endsection
