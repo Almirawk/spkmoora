@@ -9,6 +9,8 @@ use App\Models\Pemeriksaan;
 use Illuminate\Http\Request;
 use Dompdf\Dompdf;
 
+use Carbon\Carbon;
+
 class HasilController extends Controller
 {
 
@@ -19,76 +21,21 @@ class HasilController extends Controller
 
     public function index(Request $request)
     {
-        // Mengambil semua pendonor, kriteria, dan pemeriksaan dari database
         $pendonors = Pendonor::all();
         $kriterias = Kriteria::all();
         $pemeriksaans = Pemeriksaan::all();
-        $bobot = [];
-        $namaKriterias = [];
 
-        // Membuat array asosiatif untuk menyimpan bobot dan nama kriteria
-        foreach ($kriterias as $kriteria) {
-            $bobot[$kriteria->id] = $kriteria->bobot;
-            $namaKriterias[$kriteria->id] = $kriteria->nama;
-        }
+        $bobot = $kriterias->pluck('bobot', 'id')->toArray();
+        $namaKriterias = $kriterias->pluck('nama', 'id')->toArray();
 
-        // Array untuk menyimpan hasil konversi pendonor yang lolos validasi
-        $hasilKonversi = [];
+        $hasilKonversi = $this->getHasilKonversi($pendonors, $pemeriksaans, $kriterias, $namaKriterias);
 
-        // Looping melalui setiap pendonor
-        foreach ($pendonors as $pendonor) {
-            // Mendapatkan nilai pemeriksaan untuk pendonor saat ini
-            $nilaiPendonor = $pemeriksaans->where('pendonor_id', $pendonor->id);
-            $nilaiKriteria = [];
+        $matriksKeputusan = $this->buildMatriksKeputusan($hasilKonversi, $kriterias);
 
-            // Memeriksa apakah pendonor lolos validasi
-            if ($this->validasiKriteria($nilaiPendonor, $namaKriterias)) {
-                // Looping melalui setiap kriteria
-                foreach ($kriterias as $kriteria) {
-                    // Mendapatkan nilai untuk kriteria saat ini
-                    $nilai = $nilaiPendonor->where('kriteria_id', $kriteria->id)->first()->nilai ?? '-';
-
-                    // Melakukan konversi nilai sesuai dengan jenis kriteria
-                    if ($kriteria->nama == 'Tekanan Darah') {
-                        $nilai = $this->konversiTekananDarah($nilai);
-                    } elseif ($kriteria->nama == 'Hemoglobin') {
-                        $nilai = $this->konversiHemoglobin($nilai);
-                    } elseif ($kriteria->nama == 'Berat Badan') {
-                        $nilai = $this->konversiBeratBadan($nilai);
-                    } else {
-                        $nilai = is_numeric($nilai) ? floatval($nilai) : 0;
-                    }
-
-                    // Menyimpan nilai konversi untuk kriteria saat ini
-                    $nilaiKriteria[$kriteria->id] = $nilai;
-                }
-
-                // Menyimpan hasil konversi pendonor yang lolos validasi
-                $hasilKonversi[] = [
-                    'pendonor_id' => $pendonor->id,
-                    'nama_pendonor' => $pendonor->user->name,
-                    'nilai_kriteria' => $nilaiKriteria,
-                ];
-            }
-        }
-
-        $matriksKeputusan = [];
-        foreach ($hasilKonversi as $hasil) {
-            $baris = [];
-            foreach ($kriterias as $kriteria) {
-                $baris[] = $hasil['nilai_kriteria'][$kriteria->id];
-            }
-            $matriksKeputusan[] = $baris;
-        }
-
-        // Normalisasi Matriks Keputusan
         $matriksNormalisasi = $this->normalisasiMatriks($matriksKeputusan);
-
-        // Hitung nilai MOORA untuk setiap alternatif
         $nilaiMoora = $this->hitungMoora($matriksNormalisasi, $kriterias);
-
-        // Menyusun hasil akhir dengan nama pendonor dan pendonor_id
         $hasilAkhir = [];
+        
         foreach ($hasilKonversi as $index => $hasil) {
             $hasilAkhir[] = [
                 'pendonor_id' => $hasil['pendonor_id'],
@@ -97,171 +44,192 @@ class HasilController extends Controller
             ];
         }
 
-        // Mengurutkan hasil akhir berdasarkan nilai MOORA (descending)
         usort($hasilAkhir, function ($a, $b) {
             return $b['nilai_moora'] <=> $a['nilai_moora'];
         });
 
-        // Ambil nilai yang diinputkan untuk jumlah data yang dipilih
         $jumlah_terpilih = $request->input('jumlah_terpilih', 5);
 
-        // Batasi hanya lima data teratas yang ditandai sebagai 'terpilih'
-        foreach ($hasilAkhir as $index => $item) {
-            $hasilAkhir[$index]['terpilih'] = $index < $jumlah_terpilih;
-        }
-
-        // Simpan hasilAkhir ke dalam session
+        $hasilAkhir = $this->markTerpilih($hasilAkhir, $jumlah_terpilih);
+        
         session(['hasilAkhir' => $hasilAkhir]);
 
         return view('hasil.index', compact('hasilAkhir'));
     }
 
 
-
     public function simpan(Request $request)
-{
-    // Mendapatkan semua data hasil dari session
-    $hasilAkhir = session('hasilAkhir');
+    {
+        $hasilAkhir = session('hasilAkhir');
 
-    foreach ($hasilAkhir as $hasil) {
-        Hasil::create([
-            'pendonor_id' => $hasil['pendonor_id'],
-            'hasil' => $hasil['nilai_moora'],
-            'status' => $hasil['terpilih'], // Menyimpan status terpilih dari hasil perhitungan
-            'created_at' => now(), // Tanggal dan waktu saat ini
-        ]);
+        foreach ($hasilAkhir as $hasil) {
+            Hasil::create([
+                'pendonor_id' => $hasil['pendonor_id'],
+                'hasil' => $hasil['nilai_moora'],
+                'status' => $hasil['terpilih'],
+                'created_at' => now(),
+            ]);
+        }
+
+        return redirect()->back()->with('message', 'Hasil perhitungan berhasil disimpan');
     }
 
-    return redirect()->back()->with('message', 'Hasil perhitungan berhasil disimpan');
-}
+    private function getHasilKonversi($pendonors, $pemeriksaans, $kriterias, $namaKriterias)
+    {
+        $hasilKonversi = [];
 
+        foreach ($pendonors as $pendonor) {
+            $nilaiPendonor = $pemeriksaans->where('pendonor_id', $pendonor->id);
+            $nilaiKriteria = [];
 
+            if ($this->validasiKriteria($nilaiPendonor, $namaKriterias)) {
+                foreach ($kriterias as $kriteria) {
+                    $nilai = $nilaiPendonor->where('kriteria_id', $kriteria->id)->first()->nilai ?? '-';
+                    $nilaiKriteria[$kriteria->id] = $this->konversiNilai($nilai, $kriteria->nama);
+                }
 
+                $hasilKonversi[] = [
+                    'pendonor_id' => $pendonor->id,
+                    'nama_pendonor' => $pendonor->user->name,
+                    'nilai_kriteria' => $nilaiKriteria,
+                ];
+            }
+        }
 
+        return $hasilKonversi;
+    }
 
+    private function konversiNilai($nilai, $namaKriteria)
+    {
+        if ($namaKriteria == 'Tekanan Darah') {
+            return $this->konversiTekananDarah($nilai);
+        } elseif ($namaKriteria == 'Hemoglobin') {
+            return $this->konversiHemoglobin($nilai);
+        } elseif ($namaKriteria == 'Berat Badan') {
+            return $this->konversiBeratBadan($nilai);
+        }
 
+        return is_numeric($nilai) ? floatval($nilai) : 0;
+    }
 
+    private function buildMatriksKeputusan($hasilKonversi, $kriterias)
+    {
+        $matriksKeputusan = [];
+
+        foreach ($hasilKonversi as $hasil) {
+            $baris = [];
+            foreach ($kriterias as $kriteria) {
+                $baris[] = $hasil['nilai_kriteria'][$kriteria->id];
+            }
+            $matriksKeputusan[] = $baris;
+        }
+
+        return $matriksKeputusan;
+    }
+
+    private function markTerpilih(array $hasilAkhir, $jumlahTerpilih)
+    {
+        foreach ($hasilAkhir as $index => $item) {
+            $hasilAkhir[$index]['terpilih'] = $index < $jumlahTerpilih;
+        }
+
+        return $hasilAkhir;
+    }
 
     private function validasiKriteria($nilaiPendonor, $namaKriterias)
     {
-        // Inisialisasi status validasi
-        $valid = false;
-
-        // Lakukan validasi untuk setiap kriteria
         foreach ($nilaiPendonor as $nilai) {
             $kriteriaNama = $namaKriterias[$nilai->kriteria_id];
             $nilai = $nilai->nilai;
 
-            // Lakukan validasi sesuai dengan kriteria
-            if ($kriteriaNama == 'Tekanan Darah') {
-                // Memeriksa apakah nilai tekanan darah memiliki format yang sesuai
-                if (!preg_match('/^\d+\/\d+$/', $nilai)) {
-                    return false; // Jika salah satu kriteria tidak valid, langsung kembalikan false
-                }
-
-                list($sistolik, $diastolik) = explode('/', $nilai);
-
-                // Validasi rentang nilai tekanan darah
-                if ($sistolik < 110 || $sistolik > 150 || $diastolik < 70 || $diastolik > 90) {
-                    return false; // Jika salah satu kriteria tidak valid, langsung kembalikan false
-                }
-            } elseif ($kriteriaNama == 'Berat Badan') {
-                // Validasi minimal berat badan
-                if ($nilai < 50) {
-                    return false; // Jika salah satu kriteria tidak valid, langsung kembalikan false
-                }
-            } elseif ($kriteriaNama == 'Hemoglobin') {
-                // Validasi rentang nilai hemoglobin
-                if ($nilai < 12.5 || $nilai > 17) {
-                    return false; // Jika salah satu kriteria tidak valid, langsung kembalikan false
-                }
-            } elseif ($kriteriaNama == 'Tidak Konsumsi Obat') {
-                // Validasi minimal obat yang tidak dikonsumsi
-                if ($nilai < 3) {
-                    return false; // Jika salah satu kriteria tidak valid, langsung kembalikan false
-                }
-            } elseif ($kriteriaNama == 'Umur') {
-                // Validasi rentang nilai umur
-                if ($nilai < 17 || $nilai > 50) {
-                    return false; // Jika salah satu kriteria tidak valid, langsung kembalikan false
-                }
-            } elseif ($kriteriaNama == 'Lamanya Terakhir Tidur') {
-                // Validasi minimal lamanya terakhir tidur
-                if ($nilai < 4) {
-                    return false; // Jika salah satu kriteria tidak valid, langsung kembalikan false
-                }
-            } elseif ($kriteriaNama == 'Riwayat Penyakit') {
-                // Validasi jumlah riwayat penyakit
-                if ($nilai != 1) {
-                    return false; // Jika salah satu kriteria tidak valid, langsung kembalikan false
-                }
+            if (!$this->isValidKriteria($kriteriaNama, $nilai)) {
+                return false;
             }
-
-            // Set valid menjadi true jika setidaknya ada satu kriteria yang valid
-            $valid = true;
         }
 
-        // Kembalikan status validasi
-        return $valid;
+        return true;
+    }
+
+    private function isValidKriteria($kriteriaNama, $nilai)
+    {
+        switch ($kriteriaNama) {
+            case 'Tekanan Darah':
+                return $this->validasiTekananDarah($nilai);
+            case 'Berat Badan':
+                return $nilai >= 50;
+            case 'Hemoglobin':
+                return $nilai >= 12.5 && $nilai <= 17;
+            case 'Tidak Konsumsi Obat':
+                return $nilai >= 3;
+            case 'Umur':
+                return $nilai >= 17 && $nilai <= 50;
+            case 'Lamanya Terakhir Tidur':
+                return $nilai >= 4;
+            case 'Riwayat Penyakit':
+                return $nilai == 1;
+            default:
+                return true;
+        }
+    }
+
+    private function validasiTekananDarah($nilai)
+    {
+        if (!preg_match('/^\d+\/\d+$/', $nilai)) {
+            return false;
+        }
+
+        list($sistolik, $diastolik) = explode('/', $nilai);
+
+        return $sistolik >= 110 && $sistolik <= 150 && $diastolik >= 70 && $diastolik <= 90;
     }
 
     private function konversiTekananDarah($tekanan_darah)
     {
-        // Memeriksa apakah nilai tekanan darah memiliki format yang sesuai
         if (!preg_match('/^\d+\/\d+$/', $tekanan_darah)) {
-            // Jika tidak, kembalikan nilai default atau tangani kesalahan dengan cara lain
-            return 0; // Misalnya, nilai default 0
+            return 0;
         }
 
         list($sistolik, $diastolik) = explode('/', $tekanan_darah);
 
-        // Lakukan konversi berdasarkan rentang nilai tekanan darah
         if ($sistolik < 110 && $diastolik < 70) {
-            return 1; // Nilai rendah
+            return 1;
         } elseif ($sistolik > 155 && $diastolik > 90) {
-            return 2; // Nilai tinggi
-        } else {
-            return 3; // Nilai sedang
+            return 2;
         }
+
+        return 3;
     }
 
     private function konversiBeratBadan($berat_badan)
     {
-        // Memeriksa apakah nilai berat badan memiliki format yang sesuai
         if (!is_numeric($berat_badan)) {
-            // Jika tidak, kembalikan nilai default atau tangani kesalahan dengan cara lain
-            return 0; // Misalnya, nilai default 0
+            return 0;
         }
 
-        // Lakukan konversi berdasarkan rentang nilai berat badan
         if ($berat_badan < 50) {
-            return 1; // Nilai kurus
-        } elseif ($berat_badan >= 50 && $berat_badan <= 65) {
-            return 4; // Nilai sedang
-        } elseif ($berat_badan > 65 && $berat_badan <= 80) {
-            return 3; // Nilai gemuk
+            return 1;
+        } elseif ($berat_badan <= 65) {
+            return 4;
+        } elseif ($berat_badan <= 80) {
+            return 3;
         } elseif ($berat_badan > 80) {
-            return 2; // Nilai obesitas
+            return 2;
         }
     }
 
-
     private function konversiHemoglobin($hemoglobin)
     {
-        // Memeriksa apakah nilai hemoglobin memiliki format yang sesuai
         if (!is_numeric($hemoglobin)) {
-            // Jika tidak, kembalikan nilai default atau tangani kesalahan dengan cara lain
-            return 0; // Misalnya, nilai default 0
+            return 0;
         }
 
-        // Lakukan konversi berdasarkan rentang nilai hemoglobin
         if ($hemoglobin < 12.5) {
-            return 1; // Nilai rendah
+            return 1;
         } elseif ($hemoglobin > 17) {
-            return 2; // Nilai tinggi
-        } else {
-            return 3; // Nilai normal
+            return 2;
         }
+
+        return 3;
     }
 
     private function normalisasiMatriks($matriks)
@@ -271,19 +239,17 @@ class HasilController extends Controller
 
         for ($j = 0; $j < $jumlahKriteria; $j++) {
             $sum = 0;
-            foreach ($matriks as $i => $nilai) {
-                // Pastikan Anda mengonversi nilai string ke numerik jika diperlukan
+            foreach ($matriks as $nilai) {
                 $nilai[$j] = floatval($nilai[$j]);
                 $sum += pow($nilai[$j], 2);
             }
             $akarSum = sqrt($sum);
 
             foreach ($matriks as $i => $nilai) {
-                // Pastikan Anda menggunakan nilai numerik untuk normalisasi
                 $matriksNormalisasi[$i][$j] = $nilai[$j] / $akarSum;
             }
         }
-        // dd($matriksNormalisasi);
+
         return $matriksNormalisasi;
     }
 
@@ -296,14 +262,9 @@ class HasilController extends Controller
             $totalCost = 0;
 
             foreach ($nilai as $j => $v) {
-                // Ambil bobot dan jenis kriteria (benefit atau cost)
-                $bobot = $kriterias[$j]->bobot;
+                $bobot = floatval(str_replace(',', '.', $kriterias[$j]->bobot));
                 $jenis = $kriterias[$j]->jenis;
 
-                // Konversi bobot menjadi float (jika perlu)
-                $bobot = floatval(str_replace(',', '.', $bobot));
-
-                // Perhitungan total nilai benefit dan cost
                 if ($jenis == 'Benefit') {
                     $totalBenefit += $v * $bobot;
                 } elseif ($jenis == 'Cost') {
@@ -311,47 +272,42 @@ class HasilController extends Controller
                 }
             }
 
-            // Hitung nilai MOORA dengan mengurangkan total cost dari total benefit
             $nilaiMoora[] = $totalBenefit - $totalCost;
         }
 
         return $nilaiMoora;
     }
-
-
-
-
-
-
-
-    public function generateRiwayatPdf($datetime)
-    {
-
-        $hasil = Hasil::where('created_at', $datetime)->get();
-        $pdfView = view('hasil.pdf', compact('hasil'));
-
-        $dompdf = new Dompdf();
-        $dompdf->loadHtml($pdfView);
-
-        $dompdf->setPaper('A4', 'landscape');
-
-        $dompdf->render();
-
-        return $dompdf->stream("riwayat_perhitungan.pdf");
+    
+        public function generateRiwayatPdf($datetime)
+        {
+            $hasil = Hasil::where('created_at', $datetime)->get();
+            $pdfView = view('hasil.pdf', compact('hasil'));
+    
+            $dompdf = new Dompdf();
+            $dompdf->loadHtml($pdfView);
+    
+            $dompdf->setPaper('A4', 'landscape');
+    
+            $dompdf->render();
+    
+            return $dompdf->stream("riwayat_perhitungan.pdf");
+        }
+    
+        public function riwayat()
+        {
+            $riwayat = Hasil::orderBy('created_at', 'desc')->get()->groupBy(function ($date) {
+                return Carbon::parse($date->created_at)->format('Y-m-d H:i:s');
+            });
+    
+            return view('hasil.riwayat', compact('riwayat'));
+        }
+    
+        public function detailRiwayat($datetime)
+        {
+            $hasilPerhitungan = Hasil::where('created_at', 'like', $datetime . '%')->get();
+    
+            return view('hasil.detail_riwayat', compact('hasilPerhitungan'));
+        }
     }
+    
 
-    public function riwayat()
-    {
-        $riwayat = Hasil::orderBy('created_at', 'desc')->get()->groupBy(function ($date) {
-            return \Carbon\Carbon::parse($date->created_at)->format('Y-m-d H:i:s');
-        });
-
-        return view('hasil.riwayat', compact('riwayat'));
-    }
-    public function detailRiwayat($datetime)
-    {
-        $hasilPerhitungan = Hasil::where('created_at', 'like', $datetime . '%')->get();
-
-        return view('hasil.detail_riwayat', compact('hasilPerhitungan'));
-    }
-}
