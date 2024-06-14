@@ -60,13 +60,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('insert', [PemeriksaanController::class, 'insert'])->name('pemeriksaan.add.insert');
         Route::get('edit/{id}', [PemeriksaanController::class, 'edit'])->name('pemeriksaan.edit');
         Route::post('update/{id}', [PemeriksaanController::class, 'update'])->name('pemeriksaan.update');
-        Route::get('delete/{id}', [PemeriksaanController::class, 'delete'])->name('pemeriksaan.delete');
+        Route::post('delete/{id}', [PemeriksaanController::class, 'delete'])->name('pemeriksaan.delete');
         Route::post('/nilai/set', [PemeriksaanController::class, 'setNilai'])->name('nilai.set');
         Route::post('/nilai/update', [PemeriksaanController::class, 'updateNilai'])->name('nilai.update');
         // Route::delete('/pendonor/{id}', [PendonorController::class, 'destroy'])->name('pendonor.destroy');
 
     });
-    
+
+    Route::delete('/pemeriksaan/{pendonor}', [PemeriksaanController::class, 'destroy'])->name('pemeriksaan.destroy');
 
 
     Route::prefix('hasil')->group(function () {

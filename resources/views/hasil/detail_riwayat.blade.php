@@ -12,6 +12,7 @@
                             <th>Nama Pendonor</th>
                             <th>Pemeriksaan</th>
                             <th>Hasil</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -20,7 +21,7 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $hasil->pendonor->user->name }}</td>
                                 <td>
-                                    <table>
+                                    <table class="table table-bordered">
                                         <thead>
                                             <tr>
                                                 <th>Kriteria</th>
@@ -37,7 +38,12 @@
                                         </tbody>
                                     </table>
                                 </td>
-                                <td>{{ $hasil->hasil }}</td>
+                                <td>{{ number_format($hasil->hasil, 5) }}</td>
+                                <td>
+                                    <span class="badge text-white p-2 {{ $hasil->status ? 'bg-primary' : 'bg-danger' }}">
+                                        {{ $hasil->status ? 'Terpilih' : 'Tidak Terpilih' }}
+                                    </span>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

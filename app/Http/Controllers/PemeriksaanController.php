@@ -58,17 +58,19 @@ class PemeriksaanController extends Controller
         return redirect()->route('pemeriksaan')->with('message', 'Nilai berhasil diupdate.');
     }
 
-    // public function destroyValues($pendonor_id)
-    // {
-    //     // Find the pendonor
-    //     $pendonor = Pendonor::findOrFail($pendonor_id);
+    public function destroy($id)
+{
+    $pendonor = Pendonor::find($id);
 
-    //     // Delete pemeriksaan values associated with this pendonor
-    //     $pendonor->pemeriksaans()->delete();
+    if ($pendonor) {
 
-    //     // Redirect back with a success message
-    //     return redirect()->back()->with('message', 'Pemeriksaan values deleted successfully.');
-    // }
+        $pendonor->pemeriksaans()->delete();
+        return redirect()->route('pemeriksaan')->with('message', 'Data pemeriksaan berhasil dihapus.');
+    }
+
+    return redirect()->route('pemeriksaan')->with('error', 'Pendonor tidak ditemukan.');
+}
+
 
 
 
