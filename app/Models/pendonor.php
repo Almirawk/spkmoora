@@ -15,6 +15,7 @@ class pendonor extends Model
         'tgl_lahir',
         'jns_kelamin',
         'no_telepon',
+        'golongan_darah',
     ];
 
     public function user()

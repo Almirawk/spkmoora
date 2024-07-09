@@ -7,11 +7,14 @@ use App\Http\Controllers\PendonorController;
 use App\Http\Controllers\KriteriaController;
 use App\Http\Controllers\PemeriksaanController;
 use App\Http\Controllers\DetailRiwayatController;
+use App\Http\Controllers\ProfilController;
 use App\Models\Pemeriksaan;
 use App\Http\Controllers\RiwayatPemeriksaanController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +27,23 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Auth::routes();
+Auth::routes(['verify' => true]);
+Route::get('/email/verify', function () {
+
+    return view('auth.verify');
+})->middleware('auth')->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $r) {
+    $r->fulfill();
+
+    return redirect('/');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $r) {
+
+    $r->user()->sendEmailVerificationNotification();
+
+    return back()->with('resent', 'Verification link sent ');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 
 
@@ -44,6 +63,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('update/{id}', [KriteriaController::class, 'update'])->name('kriteria.update');
         Route::get('delete/{id}', [KriteriaController::class, 'delete'])->name('kriteria.delete');
     });
+
+    Route::get('/profil/edit', [ProfilController::class, 'edit'])->name('profil.edit');
+Route::put('/profil/update', [ProfilController::class, 'update'])->name('profil.update');
 
     Route::prefix('pendonor')->group(function () {
         Route::get('', [PendonorController::class, 'index'])->name('pendonor');

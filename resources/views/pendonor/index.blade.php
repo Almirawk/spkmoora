@@ -13,6 +13,26 @@
             </button>
         </div>
     @endif
+    @if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if (session('error'))
+   
+@endif
+
+@if ($errors->any())
+<div class="alert alert-danger">
+    <ul>
+        @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -70,8 +90,8 @@
                                         @method('POST')
                                         <div class="modal-body">
                                             <div class="form-group">
-                                                <label for="nama_pendonor">Nama Pendonor</label>
-                                                <input type="text" class="form-control" id="nama_pendonor" name="nama_pendonor" value="{{ $row->nama_pendonor }}" required>
+                                                <label for="name">Nama Pendonor</label>
+                                                <input type="text" class="form-control" id="name" name="name" value="{{ $row->user->name }}" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="alamat">Alamat</label>
@@ -84,8 +104,8 @@
                                             <div class="form-group">
                                                 <label for="jns_kelamin">Jenis Kelamin</label>
                                                 <select class="form-control" id="jns_kelamin" name="jns_kelamin" required>
-                                                    <option value="0" {{ $row->jns_kelamin == '0' ? 'selected' : '' }}>Perempuan</option>
-                                                    <option value="1" {{ $row->jns_kelamin == '1' ? 'selected' : '' }}>Laki-Laki</option>
+                                                    <option value="L" {{ $row->jns_kelamin == 'L' ? 'selected' : '' }}>Perempuan</option>
+                                                    <option value="L" {{ $row->jns_kelamin == 'P' ? 'selected' : '' }}>Laki-Laki</option>
                                                 </select>
                                             </div>
                                             <div class="form-group">
