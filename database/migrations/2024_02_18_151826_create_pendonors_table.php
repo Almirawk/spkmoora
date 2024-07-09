@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('tgl_lahir');
             $table->enum('jns_kelamin', ['L', 'P']); // L untuk laki-laki, P untuk perempuan
             $table->string('no_telepon');
+            $table->enum('golongan_darah', ['A', 'B', 'AB', 'O'])->nullable();
             $table->timestamps();
         });
     }

@@ -16,11 +16,12 @@
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr class="text-center">
                             <th>No</th>
                             <th>Nama Pendonor</th>
+                            <th>Golongan Darah</th>
                             @foreach ($kriterias as $item)
                                 <th>{{ $item->nama }}</th>
                             @endforeach
@@ -32,9 +33,21 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $pendonor->user->name }}</td>
+                                <td>{{ $pendonor->golongan_darah}}</td>
                                 @foreach ($kriterias as $kriteria)
-                                    <td>{{ $pendonor->pemeriksaans->where('kriteria_id', $kriteria->id)->first()->nilai ?? '-' }}
-                                    </td>
+                                @php
+                                if ($kriteria->nama == 'Umur') {
+                                    $tulisan = $pendonor->age;
+                                }else {
+                                $nilai = $pendonor->pemeriksaans->where('kriteria_id', $kriteria->id)->first()->nilai ?? '-';
+                                if ($kriteria->nama == 'Riwayat Penyakit') {
+                                    $tulisan = ($nilai == 1) ? 'Tidak' : (($nilai == 0) ? 'Iya' : '-');
+                                } else {
+                                    $tulisan = $nilai; 
+                                }
+                                }
+                            @endphp
+                            <td>{{ $tulisan }}</td>
                                 @endforeach
                                 <td>
                                     <div class="d-flex ">
@@ -65,35 +78,49 @@
                                         <form method="POST" action="{{ route('nilai.update') }}">
                                             @csrf
                                             <div class="modal-body">
-                                                <input type="hidden" id="pendonor_id" name="pendonor_id"
-                                                    value="{{ $pendonor->id }}">
+                                                <input type="hidden" id="pendonor_id" name="pendonor_id" value="{{ $pendonor->id }}">
                                                 @foreach ($kriterias as $kriteria)
+                                                    @if ($kriteria->nama !== 'Umur')
                                                     <div class="form-group">
-                                                        <label
-                                                            for="nilai_{{ $kriteria->id }}">{{ $kriteria->nama }}</label>
-                                                        @if ($kriteria->nama === 'Riwayat Penyakit')
-                                                            <select class="form-control mb-2"
-                                                                id="nilai_{{ $kriteria->id }}"
-                                                                name="nilai[{{ $kriteria->id }}]" required>
-                                                                <option value="0">Iya</option>
-                                                                <option value="1">Tidak</option>
+                                                        @php
+                                                            $nilaiRiwayat = $pendonor->pemeriksaans->where('kriteria_id', $kriteria->id)->first()->nilai ?? '';
+                                                        @endphp
+                                                        <label for="nilai_{{ $kriteria->id }}">{{ $kriteria->nama }}</label>
+                                                        @if ($kriteria->nama === 'Lamanya Terakhir Tidur')
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="nilai_{{ $kriteria->id }}"
+                                                                    name="nilai[{{ $kriteria->id }}]" value="{{ $nilaiRiwayat }}" required>
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text">Jam terakhir</span>
+                                                                </div>
+                                                            </div>
+                                                        @elseif ($kriteria->nama === 'Tidak Konsumsi Obat')
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="nilai_{{ $kriteria->id }}"
+                                                                    name="nilai[{{ $kriteria->id }}]" value="{{ $nilaiRiwayat }}" required>
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text">Hari terakhir</span>
+                                                                </div>
+                                                            </div>
+                                                        @elseif ($kriteria->nama === 'Riwayat Penyakit')
+                                                            <select class="form-control mb-2" id="nilai_{{ $kriteria->id }}" name="nilai[{{ $kriteria->id }}]" required>
+                                                                <option value="0" @if($nilaiRiwayat == 0) selected @endif>Iya</option>
+                                                                <option value="1" @if($nilaiRiwayat == 1) selected @endif>Tidak</option>
                                                             </select>
                                                         @else
-                                                            <input type="text" class="form-control mb-2"
-                                                                id="nilai_{{ $kriteria->id }}"
-                                                                name="nilai[{{ $kriteria->id }}]"
-                                                                value="{{ $pendonor->pemeriksaans->where('kriteria_id', $kriteria->id)->first()->nilai ?? '' }}"
-                                                                required>
+                                                            <input type="text" class="form-control mb-2" id="nilai_{{ $kriteria->id }}" name="nilai[{{ $kriteria->id }}]"
+                                                                   value="{{ $nilaiRiwayat }}" required>
                                                         @endif
                                                     </div>
+                                                    @endif
                                                 @endforeach
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                 <button type="submit" class="btn btn-primary">Simpan</button>
                                             </div>
                                         </form>
+                                        
                                     </div>
                                 </div>
                             </div>

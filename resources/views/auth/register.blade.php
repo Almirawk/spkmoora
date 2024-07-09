@@ -1,10 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .logo-uaa {
+    height: 70px; /* Adjust this height to match the PMI logo */
+    width: auto;
+    margin-left: 20px; /* Optional: Add some space between the two logos */
+}
+</style>
 <div class="container" style="background-color: #F44336; height: 100vh; display: flex; justify-content: center; align-items: center;">
     <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); width: 800px; display: flex; flex-direction: column; align-items: center; box-sizing: border-box;">
         <div style="text-align: center; margin-bottom: 20px;">
-            <img src="{{ asset('template/img/Logo_PMI.png') }}" alt="Logo PMI" style="width: 150px;">
+            <img src="{{ asset('template/img/Logo_PMI.png') }}" alt="Logo PMI" style="width: 100px;">
+            <img src="{{ asset('template/img/AlmaAta Logo.png') }}" alt="" class="logo-uaa">
         </div>
         <h2 style="text-align: center; margin-bottom: 20px;">Registrasi</h2>
         <form method="POST" action="{{ route('register') }}" style="width: 100%;">
@@ -78,6 +86,15 @@
                         <label for="no_telepon">No Telepon</label>
                         <input id="no_telepon" type="text" class="form-control @error('no_telepon') is-invalid @enderror" name="no_telepon" value="{{ old('no_telepon') }}" required autocomplete="no_telepon">
                         @error('no_telepon')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="golongan_darah">Golongan Darah (Optional)</label>
+                        <input id="golongan_darah" type="text" class="form-control @error('golongan_darah') is-invalid @enderror" name="golongan_darah">
+                        @error('golongan_darah')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>

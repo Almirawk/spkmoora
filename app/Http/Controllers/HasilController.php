@@ -95,7 +95,7 @@ class HasilController extends Controller
                 ];
             }
         }
-
+        // dd($hasilKonversi);
         return $hasilKonversi;
     }
 
@@ -281,7 +281,8 @@ class HasilController extends Controller
         public function generateRiwayatPdf($datetime)
         {
             $hasil = Hasil::where('created_at', $datetime)->get();
-            $pdfView = view('hasil.pdf', compact('hasil'));
+           
+            $pdfView = view('hasil.pdf', compact('hasil','datetime'));
     
             $dompdf = new Dompdf();
             $dompdf->loadHtml($pdfView);

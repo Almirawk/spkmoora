@@ -60,6 +60,7 @@
                 <th>{{ $item->nama }}</th>
               @endforeach
               <th>Tanggal Pemeriksaan</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -88,6 +89,11 @@
               <td>{{ $nilai }}</td>
               @endforeach
               <td>{{ $tanggal != '-' ? $tanggal->format('d-m-Y') : '-' }}</td>
+              <td>
+                <span class="badge {{ $item->status ? 'bg-primary' : 'bg-danger' }}">
+                    {{ $item->status ? 'Terpilih' : 'Tidak Terpilih' }}
+                </span>
+            </td>
             </tr>
             @else
             <tr>

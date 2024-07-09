@@ -44,7 +44,8 @@ class PendonorController extends Controller
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'nama_pendonor' => 'required|string|max:255', 
+            'nama_pendonor' => 'required|string|max:255',
+            'golongan_darah' => 'nullable|string',
             'alamat' => 'required|string|max:255',
             'tgl_lahir' => 'required|date',
             'jns_kelamin' => 'required|integer',
@@ -54,6 +55,7 @@ class PendonorController extends Controller
         $pendonor = Pendonor::findOrFail($id);
         $pendonor->update([
             'nama_pendonor' => $request->input('nama_pendonor'), 
+            'golongan_darah' => $request->input('golongan_darah'),
             'alamat' => $request->input('alamat'),
             'tgl_lahir' => $request->input('tgl_lahir'),
             'jns_kelamin' => $request->input('jns_kelamin'),

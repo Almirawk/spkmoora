@@ -14,6 +14,15 @@
         </div>
     @endif
 
+    @if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
+
     <!-- DataTales -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -70,7 +79,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="bobot">Bobot</label>
-                                                <input type="text" class="form-control" id="bobot" name="bobot" value="{{ $row->bobot }}" required>
+                                                <input type="number" step="0.01" class="form-control" id="bobot" name="bobot" value="{{ $row->bobot }}" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="jenis">Jenis</label>

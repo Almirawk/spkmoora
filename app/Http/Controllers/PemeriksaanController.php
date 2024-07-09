@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pemeriksaan;
 use App\Models\Kriteria;
 use App\Models\pendonor;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PemeriksaanController extends Controller
@@ -13,6 +14,10 @@ class PemeriksaanController extends Controller
     {
         $kriterias = Kriteria::all();
         $pendonors = Pendonor::all();
+        foreach ($pendonors as $pendonor) {
+            $pendonor->age = Carbon::parse($pendonor->tgl_lahir)->age;
+        }
+
         return view('pemeriksaan.index', compact('kriterias', 'pendonors'));
 
     }

@@ -32,7 +32,16 @@
                                             @foreach ($hasil->pendonor->pemeriksaan as $pemeriksaan)
                                                 <tr>
                                                     <td>{{ $pemeriksaan->kriteria->nama }}</td>
-                                                    <td>{{ $pemeriksaan->nilai }}</td>
+                                                    <td>
+                                                        @php
+                                                            $nilai = $pemeriksaan->nilai;
+                                                            if ($pemeriksaan->kriteria->nama == 'Riwayat Penyakit') {
+                                                                $nilai = $nilai == 1 ? 'Tidak' : ($nilai == 0 ? 'Iya' : '-');
+                                                            }
+                                                        @endphp
+                                                        {{ $nilai }}
+                                                    </td>
+                                                    
                                                 </tr>
                                             @endforeach
                                         </tbody>

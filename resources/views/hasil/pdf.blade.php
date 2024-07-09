@@ -5,9 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riwayat Perhitungan</title>
     <style>
+        @page {
+            size: A4;
+            margin: 20mm 10mm;
+        }
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
+            line-height: 1.5;
+            margin: 0;
         }
         table {
             width: 100%;
@@ -46,12 +51,15 @@
         }
         .bg-danger {
             background-color: #dc3545;
-            color: #fff;
+            color: #f7e5e5;
         }
     </style>
 </head>
 <body>
+
     <h1>Riwayat Perhitungan</h1>
+    <p>Tanggal : {{$datetime}}</p>
+    
     
     <table>
         <thead>
@@ -69,7 +77,7 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $item->pendonor->user->name }}</td>
                     <td>
-                        <table class="subtable">
+                        <table class="subtable"> 
                             <thead>
                                 <tr>
                                     <th>Kriteria</th>
@@ -80,7 +88,15 @@
                                 @foreach ($item->pendonor->pemeriksaan as $pemeriksaan)
                                     <tr>
                                         <td>{{ $pemeriksaan->kriteria->nama }}</td>
-                                        <td>{{ $pemeriksaan->nilai }}</td>
+                                        <td>
+                                            @php
+                                                $nilai = $pemeriksaan->nilai;
+                                                if ($pemeriksaan->kriteria->nama == 'Riwayat Penyakit') {
+                                                    $nilai = $nilai == 1 ? 'Tidak' : ($nilai == 0 ? 'Iya' : '-');
+                                                } 
+                                            @endphp
+                                            {{ $nilai }}
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -88,10 +104,13 @@
                     </td>
                     <td>{{ number_format($item->hasil, 5) }}</td>
                     <td>
+                        {{ $item->status ? 'Terpilih' : 'Tidak Terpilih' }}
+                    </td>                    
+                    {{-- <td>
                         <span class="badge {{ $item->status ? 'bg-primary' : 'bg-danger' }}">
                             {{ $item->status ? 'Terpilih' : 'Tidak Terpilih' }}
                         </span>
-                    </td>
+                    </td> --}}
                 </tr>
             @endforeach
         </tbody>

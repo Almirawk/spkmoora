@@ -58,6 +58,7 @@ class RegisterController extends Controller
             'tgl_lahir' => ['required', 'date'],
             'jns_kelamin' => ['required', 'string'],
             'no_telepon' => ['required', 'string', 'max:15'],
+            'golongan_darah' => ['nullable', 'string'],
         ]);
     }
 
@@ -82,6 +83,7 @@ class RegisterController extends Controller
                 'tgl_lahir' => $data['tgl_lahir'],
                 'jns_kelamin' => $data['jns_kelamin'],
                 'no_telepon' => $data['no_telepon'],
+                'golongan_darah' => $data['golongan_darah'] ?? null,
             ]);
     
             return $user; // Perubahan: kembalikan instance User yang baru dibuat

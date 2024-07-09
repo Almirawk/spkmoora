@@ -26,6 +26,36 @@
 
 </head>
 
+<style>
+.sidebar-brand-icon {
+    justify-content: center;
+}
+
+.sidebar-brand-icon > img {
+    margin-right: 5px;
+}
+
+@media (max-width: 768px) {
+    .sidebar-brand-icon {
+        justify-content: flex-start;
+    }
+
+    .sidebar-brand-icon > img {
+        margin-right: 2px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar-brand-icon {
+        justify-content: flex-start;
+    }
+
+    .sidebar-brand-icon > img {
+        margin-right: 1px;
+    }
+}
+</style>
+
 <body id="page-top">
 
     <!-- Page Wrapper -->
@@ -35,10 +65,10 @@
         <ul class="navbar-nav bg-white sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand bg-white d-flex align-items-center justify-content-center" href="">
+            <a class="sidebar-brand bg-white d-flex align-items-center justify-content-center" >
                 <div class="sidebar-brand-icon d-flex align-items-center justify-content-between w-100">
                     <img class="w-50" src="{{asset('template/img/Logo_PMI.png')}}" alt="">
-                    <img class="w-50" src="{{asset('template/img/Logo_UAA.png')}}" alt="">
+                    <img class=" alma-ata-logo" src="{{asset('template/img/AlmaAta Logo.png')}}" alt="" style="max-height: 50px;">
                 </div>
             </a>
 
@@ -171,7 +201,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Almira Wulan Kinasih (203200161)</span>
+                        <span>Universitas Alma Ata &copy; Almira Wulan Kinasih (203200161)</span>
                     </div>
                 </div>
             </footer>

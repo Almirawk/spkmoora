@@ -1,12 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .logo-uaa {
+    height: 70px; /* Adjust this height to match the PMI logo */
+    width: auto;
+    margin-left: 20px; /* Optional: Add some space between the two logos */
+}
+</style>
+
 <div class="container" style="background-color: #F44336; height: 100vh; display: flex; justify-content: center; align-items: center;">
     <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
         <div style="text-align: center; margin-bottom: 20px;">
-            
             <img src="{{asset('template/img/Logo_PMI.png')}}" alt="" style="width: 100px;">
+            <img src="{{ asset('template/img/AlmaAta Logo.png') }}" alt="" class="logo-uaa">
         </div>
+        
         <h2 style="text-align: center; margin-bottom: 20px;">Selamat Datang</h2>
         <form method="POST" action="{{ route('login') }}">
             @csrf

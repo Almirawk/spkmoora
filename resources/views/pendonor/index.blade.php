@@ -28,11 +28,12 @@
                         <tr class="text-center">
                             <th>No</th>
                             <th>Nama Pendonor</th>
+                            <th>Golongan Darah</th> 
                             <th>Alamat</th>
                             <th>Tanggal Lahir</th>
                             <th>Jenis Kelamin</th>
                             <th>No Telepon</th>
-                            {{-- <th>Action</th> --}}
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -41,20 +42,21 @@
                         <tr class="text-center">
                             <td>{{$no++}}</td>
                             <td>{{$row->user->name}}</td>
+                            <td>{{ $row->golongan_darah }}</td> 
                             <td>{{$row->alamat}}</td>
                             <td>{{$row->tgl_lahir}}</td>
-                            <td>{{$row->jns_kelamin== 1 ? 'Laki-Laki' : 'Perempuan'}}</td>
+                            <td>{{$row->jns_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan'}}</td>
                             <td>{{$row->no_telepon}}</td>
-                            {{-- <td>
+                            <td>
                                 <button type="button" class="btn btn-warning mb-2 btn-sm" data-toggle="modal" data-target="#editModal{{ $row->id }}">
                                     <i class="fas fa-edit"></i>Edit
                                 </button>
-                                <a href="{{route('pendonor.delete', $row->id)}}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i>Delete</a>
-                            </td> --}}
+                                {{-- <a href="{{route('pendonor.delete', $row->id)}}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i>Delete</a> --}}
+                            </td>
                         </tr>
 
                         <!-- Bootstrap Modals for Editing Data -->
-                        {{-- <div class="modal fade" id="editModal{{ $row->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ $row->id }}" aria-hidden="true">
+                        <div class="modal fade" id="editModal{{ $row->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ $row->id }}" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -90,6 +92,15 @@
                                                 <label for="no_telepon">No Telepon</label>
                                                 <input type="text" class="form-control" id="no_telepon" name="no_telepon" value="{{ $row->no_telepon }}" required>
                                             </div>
+                                            <div class="form-group">
+                                                <label for="golongan_darah">Golongan Darah</label> <!-- Add input for blood type -->
+                                                <select class="form-control" id="golongan_darah" name="golongan_darah" required>
+                                                    <option value="A" {{ $row->golongan_darah == 'A' ? 'selected' : '' }}>A</option>
+                                                    <option value="B" {{ $row->golongan_darah == 'B' ? 'selected' : '' }}>B</option>
+                                                    <option value="AB" {{ $row->golongan_darah == 'AB' ? 'selected' : '' }}>AB</option>
+                                                    <option value="O" {{ $row->golongan_darah == 'O' ? 'selected' : '' }}>O</option>
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -98,7 +109,7 @@
                                     </form>
                                 </div>
                             </div>
-                        </div> --}}
+                        </div>
                         @endforeach
                     </tbody>
                 </table>

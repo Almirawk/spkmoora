@@ -22,11 +22,12 @@ class KriteriaController extends Controller
 
     public function insert(Request $request)
     {
-        $request->validate([
-            'nama' => 'required',
-            'bobot' => 'required',
-            'jenis' => 'required', 
-        ]);
+        $totalbobot = Kriteria::sum('bobot');
+        $bobot = floatval($request->bobot);
+
+        if (($totalbobot + $bobot) > 1) {
+            return redirect()->route('kriteria')->with('error', 'Total bobot kriteria tidak boleh melebihi 100%!');
+        }
 
         Kriteria::create([
             'nama' => $request->nama,
