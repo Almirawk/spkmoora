@@ -1,5 +1,7 @@
 @extends('layout.app')
+
 @section('title', 'Detail Riwayat')
+
 @section('content')
     <h1 class="h3 mb-2 text-gray-800">Detail Riwayat Perhitungan</h1>
     <div class="card shadow mb-4">
@@ -29,19 +31,10 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($hasil->pendonor->pemeriksaan as $pemeriksaan)
+                                            @foreach (json_decode($hasil->kriteria_nilai, true) as $kriteria)
                                                 <tr>
-                                                    <td>{{ $pemeriksaan->kriteria->nama }}</td>
-                                                    <td>
-                                                        @php
-                                                            $nilai = $pemeriksaan->nilai;
-                                                            if ($pemeriksaan->kriteria->nama == 'Riwayat Penyakit') {
-                                                                $nilai = $nilai == 1 ? 'Tidak' : ($nilai == 0 ? 'Iya' : '-');
-                                                            }
-                                                        @endphp
-                                                        {{ $nilai }}
-                                                    </td>
-                                                    
+                                                    <td>{{ $kriteria['nama'] }}</td>
+                                                    <td>{{ $kriteria['nilai'] }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

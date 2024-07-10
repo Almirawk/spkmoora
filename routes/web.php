@@ -86,6 +86,8 @@ Route::put('/profil/update', [ProfilController::class, 'update'])->name('profil.
         Route::post('/nilai/set', [PemeriksaanController::class, 'setNilai'])->name('nilai.set');
         Route::post('/nilai/update', [PemeriksaanController::class, 'updateNilai'])->name('nilai.update');
         // Route::delete('/pendonor/{id}', [PendonorController::class, 'destroy'])->name('pendonor.destroy');
+        Route::post('/reset', [PemeriksaanController::class, 'reset'])->name('reset');
+
 
     });
 

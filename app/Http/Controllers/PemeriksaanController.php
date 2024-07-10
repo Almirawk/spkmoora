@@ -77,4 +77,13 @@ class PemeriksaanController extends Controller
     return redirect()->route('pemeriksaan')->with('error', 'Pendonor tidak ditemukan.');
 }
 
+public function reset()
+{
+    // Hapus semua data pemeriksaan
+    Pemeriksaan::truncate();
+
+    // Set message dan redirect kembali ke halaman pemeriksaan
+    return redirect()->route('pemeriksaan')->with('message', 'Data pemeriksaan berhasil direset.');
+}
+
 }

@@ -15,6 +15,10 @@
 
 <div class="card shadow mb-4">
     <div class="card-body">
+        <button type="button" class="btn btn-warning mb-2" data-toggle="modal" data-target="#resetModal">
+            <i class="fas fa-sync-alt"></i> Reset Data
+        </button>
+        
         <div class="table-responsive">
             <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
                 <thead>
@@ -105,7 +109,7 @@
                                                 <option value="1" @if($nilaiRiwayat == 1) selected @endif>Tidak</option>
                                             </select>
                                             @elseif ($kriteria->nama === 'Umur')
-                                            <input type="text" class="form-control mb-2" id="nilai_{{ $kriteria->id }}" name="nilai[{{ $kriteria->id }}]"
+                                            <input type="text" readonly class="form-control mb-2" id="nilai_{{ $kriteria->id }}" name="nilai[{{ $kriteria->id }}]"
                                                 value="{{ $pendonor->age }}" required>
                                             @else
                                             <input type="text" class="form-control mb-2" id="nilai_{{ $kriteria->id }}" name="nilai[{{ $kriteria->id }}]"
@@ -154,6 +158,29 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="resetModal" tabindex="-1" role="dialog" aria-labelledby="resetModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resetModalLabel">Konfirmasi Reset Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin mereset semua data pemeriksaan?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <form action="{{ route('reset') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-warning">Reset Data</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>

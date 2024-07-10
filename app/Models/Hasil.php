@@ -9,7 +9,7 @@ class Hasil extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['pendonor_id', 'hasil','status','event_name'];
+    protected $fillable = ['pendonor_id', 'hasil','status','event_name', 'kriteria_nilai'];
 
     public function pendonor()
     {

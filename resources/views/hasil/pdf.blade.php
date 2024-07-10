@@ -73,47 +73,36 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($hasil as $index => $item)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $item->pendonor->user->name }}</td>
-                    <td>
-                        <table class="subtable"> 
-                            <thead>
+            @foreach ($hasil as $index => $hasil)
+            <tr>
+                <td>{{ $index + 1 }}</td>
+                <td>{{ $hasil->pendonor->user->name }}</td>
+                <td>
+                    <table class="subtable">
+                        <thead>
+                            <tr>
+                                <th>Kriteria</th>
+                                <th>Nilai</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (json_decode($hasil->kriteria_nilai, true) as $kriteria)
                                 <tr>
-                                    <th>Kriteria</th>
-                                    <th>Nilai</th>
+                                    <td>{{ $kriteria['nama'] }}</td>
+                                    <td>{{ $kriteria['nilai'] }}</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($item->pendonor->pemeriksaan as $pemeriksaan)
-                                    <tr>
-                                        <td>{{ $pemeriksaan->kriteria->nama }}</td>
-                                        <td>
-                                            @php
-                                                $nilai = $pemeriksaan->nilai;
-                                                if ($pemeriksaan->kriteria->nama == 'Riwayat Penyakit') {
-                                                    $nilai = $nilai == 1 ? 'Tidak' : ($nilai == 0 ? 'Iya' : '-');
-                                                } 
-                                            @endphp
-                                            {{ $nilai }}
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </td>
-                    <td>{{ number_format($item->hasil, 5) }}</td>
-                    <td>
-                        {{ $item->status ? 'Terpilih' : 'Tidak Terpilih' }}
-                    </td>                    
-                    {{-- <td>
-                        <span class="badge {{ $item->status ? 'bg-primary' : 'bg-danger' }}">
-                            {{ $item->status ? 'Terpilih' : 'Tidak Terpilih' }}
-                        </span>
-                    </td> --}}
-                </tr>
-            @endforeach
+                            @endforeach
+                        </tbody>
+                    </table>
+                </td>
+                <td>{{ number_format($hasil->hasil, 5) }}</td>
+                <td>
+                    <span class="badge text-white p-2 {{ $hasil->status ? 'bg-primary' : 'bg-danger' }}">
+                        {{ $hasil->status ? 'Terpilih' : 'Tidak Terpilih' }}
+                    </span>
+                </td>
+            </tr>
+        @endforeach
         </tbody>
     </table>
 </body>

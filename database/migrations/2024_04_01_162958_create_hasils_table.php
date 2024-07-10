@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('hasil', 8, 5);
             $table->boolean('status');
             $table->string('event_name'); 
+            $table->json('kriteria_nilai'); 
             $table->timestamps();
         });
     }

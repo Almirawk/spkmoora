@@ -20,61 +20,112 @@ class HasilController extends Controller
     }
 
     public function index(Request $request)
-    {
-        $pendonors = Pendonor::all();
-        $kriterias = Kriteria::all();
-        $pemeriksaans = Pemeriksaan::all();
+{
+    $pendonors = Pendonor::all();
+    $kriterias = Kriteria::all();
+    $pemeriksaans = Pemeriksaan::all();
 
-        $bobot = $kriterias->pluck('bobot', 'id')->toArray();
-        $namaKriterias = $kriterias->pluck('nama', 'id')->toArray();
+    $bobot = $kriterias->pluck('bobot', 'id')->toArray();
+    $namaKriterias = $kriterias->pluck('nama', 'id')->toArray();
 
-        $hasilKonversi = $this->getHasilKonversi($pendonors, $pemeriksaans, $kriterias, $namaKriterias);
+    $hasilKonversi = $this->getHasilKonversi($pendonors, $pemeriksaans, $kriterias, $namaKriterias);
 
-        $matriksKeputusan = $this->buildMatriksKeputusan($hasilKonversi, $kriterias);
+    $matriksKeputusan = $this->buildMatriksKeputusan($hasilKonversi, $kriterias);
 
-        $matriksNormalisasi = $this->normalisasiMatriks($matriksKeputusan);
-        $nilaiMoora = $this->hitungMoora($matriksNormalisasi, $kriterias);
-        $hasilAkhir = [];
-        
-        foreach ($hasilKonversi as $index => $hasil) {
+    $matriksNormalisasi = $this->normalisasiMatriks($matriksKeputusan);
+    $nilaiMoora = $this->hitungMoora($matriksNormalisasi, $kriterias);
+    $hasilAkhir = [];
+
+    foreach ($hasilKonversi as $index => $hasil) {
+        $isValid = true;
+        $kriteriaNilai = [];
+
+        // Periksa validitas data pemeriksaan untuk pendonor saat ini
+        foreach ($hasil['nilai_kriteria'] as $kriteriaId => $nilai) {
+            $pemeriksaan = $pendonors->find($hasil['pendonor_id'])->pemeriksaan->where('kriteria_id', $kriteriaId)->first();
+            if (!$pemeriksaan) {
+                $isValid = false;
+                break;
+            }
+
+            // Validasi tambahan jika diperlukan, misalnya untuk nilai 0
+            if ($nilai == 0) {
+                $isValid = false;
+                break;
+            }
+
+            // Ambil nilai kriteria asli dari Pemeriksaan
+            $kriteriaNilai[] = [
+                'kriteria_id' => $kriteriaId,
+                'nama' => $namaKriterias[$kriteriaId],
+                'nilai' => $pemeriksaan->nilai,
+            ];
+        }
+
+        if ($isValid) {
             $hasilAkhir[] = [
                 'pendonor_id' => $hasil['pendonor_id'],
                 'nama_pendonor' => $hasil['nama_pendonor'],
                 'nilai_moora' => $nilaiMoora[$index],
+                'kriteria_nilai' => $kriteriaNilai, // Tambahkan kriteria nilai asli dari Pemeriksaan
+                'terpilih' => false, // Inisialisasi status terpilih
             ];
         }
-
-        usort($hasilAkhir, function ($a, $b) {
-            return $b['nilai_moora'] <=> $a['nilai_moora'];
-        });
-
-        $jumlah_terpilih = $request->input('jumlah_terpilih', 5);
-
-        $hasilAkhir = $this->markTerpilih($hasilAkhir, $jumlah_terpilih);
-        
-        session(['hasilAkhir' => $hasilAkhir]);
-
-        return view('hasil.index', compact('hasilAkhir'));
     }
+
+    usort($hasilAkhir, function ($a, $b) {
+        return $b['nilai_moora'] <=> $a['nilai_moora'];
+    });
+
+    $jumlah_terpilih = $request->input('jumlah_terpilih', 5);
+
+    $hasilAkhir = $this->markTerpilih($hasilAkhir, $jumlah_terpilih);
+
+    session(['hasilAkhir' => $hasilAkhir]);
+
+    return view('hasil.index', compact('hasilAkhir'));
+}
 
 
     public function simpan(Request $request)
-{
-    $hasilAkhir = session('hasilAkhir');
-    $eventName = $request->input('event_name'); // Mengambil nama event dari form
+    {
+        $eventName = $request->input('event_name'); // Ambil nama event dari form
 
-    foreach ($hasilAkhir as $hasil) {
-        Hasil::create([
-            'pendonor_id' => $hasil['pendonor_id'],
-            'hasil' => $hasil['nilai_moora'],
-            'status' => $hasil['terpilih'],
-            'event_name' => $eventName, // Menyimpan nama event
-            'created_at' => now(),
-        ]);
+        // Simpan ke tabel Hasil
+        foreach (session('hasilAkhir') as $hasil) {
+            // Ambil nilai kriteria dari Pemeriksaan sebelum dikonversi
+            $kriteriaNilai = $this->getKriteriaNilai($hasil['pendonor_id']);
+
+            // Simpan ke tabel Hasil
+            Hasil::create([
+                'pendonor_id' => $hasil['pendonor_id'],
+                'hasil' => $hasil['nilai_moora'],
+                'status' => $hasil['terpilih'],
+                'event_name' => $eventName,
+                'kriteria_nilai' => json_encode($kriteriaNilai), // Simpan nilai kriteria sebagai JSON
+                'created_at' => now(),
+            ]);
+        }
+
+        return redirect()->back()->with('message', 'Hasil perhitungan berhasil disimpan');
     }
 
-    return redirect()->back()->with('message', 'Hasil perhitungan berhasil disimpan');
-}
+    private function getKriteriaNilai($pendonorId)
+    {
+        $pemeriksaans = Pemeriksaan::where('pendonor_id', $pendonorId)->get();
+
+        $kriteriaNilai = [];
+        foreach ($pemeriksaans as $pemeriksaan) {
+            $kriteriaNilai[] = [
+                'nama' => $pemeriksaan->kriteria->nama,
+                'nilai' => $pemeriksaan->nilai,
+            ];
+        }
+
+        return $kriteriaNilai;
+    }
+
+
 
     private function getHasilKonversi($pendonors, $pemeriksaans, $kriterias, $namaKriterias)
     {
@@ -309,7 +360,7 @@ class HasilController extends Controller
         public function detailRiwayat($datetime)
         {
             $hasilPerhitungan = Hasil::where('created_at', 'like', $datetime . '%')->get();
-    
+        
             return view('hasil.detail_riwayat', compact('hasilPerhitungan'));
         }
     }
