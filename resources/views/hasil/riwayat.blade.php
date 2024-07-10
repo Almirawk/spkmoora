@@ -9,6 +9,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
+                            <th>Nama Event</th>
                             <th>Tanggal</th>
                             <th>Aksi</th>
                         </tr>
@@ -18,6 +19,7 @@
                         @foreach ($riwayat as $datetime => $hasilPerhitungan)
                             <tr>
                                 <td>{{$no++}}</td>
+                                <td>{{ $hasilPerhitungan->first()->event_name }}</td>
                                 <td>{{ $datetime }}</td>
                                 <td>
                                     <a href="{{ route('riwayat.pdf', $datetime) }}" class="btn btn-primary btn-sm mt-2"><i class="fas fa-file-pdf me-2"></i>Cetak PDF</a>

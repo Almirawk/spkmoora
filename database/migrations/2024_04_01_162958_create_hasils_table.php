@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('hasils', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('pendonor_id');
-            $table->foreign('pendonor_id')->references('id')->on('pendonors');
-            $table->string('hasil');
+            $table->foreignId('pendonor_id')->constrained()->onDelete('cascade');
+            $table->decimal('hasil', 8, 5);
+            $table->boolean('status');
+            $table->string('event_name'); 
             $table->timestamps();
         });
     }

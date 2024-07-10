@@ -59,6 +59,7 @@
 
     <h1>Riwayat Perhitungan</h1>
     <p>Tanggal : {{$datetime}}</p>
+    <p>Event: {{ $event_name }}</p>
     
     
     <table>

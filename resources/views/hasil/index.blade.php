@@ -39,6 +39,10 @@
         <div class="card-header py-3">
             <form action="{{ route('hasil.simpan') }}" method="POST">
                 @csrf
+                <div class="mb-3">
+                    <label for="event_name" class="form-label">Nama Event:</label>
+                    <input type="text" id="event_name" name="event_name" class="form-control" required>
+                </div>
                 <button type="submit" class="btn btn-primary btn-sm">
                     <i class="fas fa-save me-2"></i>Simpan Perhitungan
                 </button>

@@ -24,6 +24,7 @@ class PemeriksaanController extends Controller
 
     public function setNilai(Request $request)
     {
+        dd($request->all());
         $pendonorId = $request->input('pendonor_id');
         $nilai = $request->input('nilai');
 

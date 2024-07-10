@@ -59,20 +59,22 @@ class HasilController extends Controller
 
 
     public function simpan(Request $request)
-    {
-        $hasilAkhir = session('hasilAkhir');
+{
+    $hasilAkhir = session('hasilAkhir');
+    $eventName = $request->input('event_name'); // Mengambil nama event dari form
 
-        foreach ($hasilAkhir as $hasil) {
-            Hasil::create([
-                'pendonor_id' => $hasil['pendonor_id'],
-                'hasil' => $hasil['nilai_moora'],
-                'status' => $hasil['terpilih'],
-                'created_at' => now(),
-            ]);
-        }
-
-        return redirect()->back()->with('message', 'Hasil perhitungan berhasil disimpan');
+    foreach ($hasilAkhir as $hasil) {
+        Hasil::create([
+            'pendonor_id' => $hasil['pendonor_id'],
+            'hasil' => $hasil['nilai_moora'],
+            'status' => $hasil['terpilih'],
+            'event_name' => $eventName, // Menyimpan nama event
+            'created_at' => now(),
+        ]);
     }
+
+    return redirect()->back()->with('message', 'Hasil perhitungan berhasil disimpan');
+}
 
     private function getHasilKonversi($pendonors, $pemeriksaans, $kriterias, $namaKriterias)
     {
@@ -281,8 +283,9 @@ class HasilController extends Controller
         public function generateRiwayatPdf($datetime)
         {
             $hasil = Hasil::where('created_at', $datetime)->get();
+            $event_name = $hasil->first()->event_name ?? 'N/A';
            
-            $pdfView = view('hasil.pdf', compact('hasil','datetime'));
+            $pdfView = view('hasil.pdf', compact('hasil','datetime','event_name'));
     
             $dompdf = new Dompdf();
             $dompdf->loadHtml($pdfView);
