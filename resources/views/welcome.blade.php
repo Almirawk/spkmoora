@@ -50,7 +50,66 @@
 @else
     @section('content')
     <div class="container mt-5">
-      <div class="card shadow mb-4">
+        <div class="card shadow border-0 mb-5">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">Event Yang Tersedia</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive"></div>
+                <table class="table mt-4">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Event</th>
+                            <th>Deskripsi</th>
+                            <th>Tanggal Mulai</th>
+                            <th>Tanggal Berakhir</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($events as $event)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $event->nama }}</td>
+                                <td>{{ $event->deskripsi }}</td>
+                                <td>{{ $event->tanggal_mulai }}</td>
+                                <td>{{ $event->tanggal_selesai }}</td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm text-center" data-bs-toggle="modal" data-bs-target="#daftarEventModal-{{ $event->id }}">Daftar Sekarang</button>
+                                </td>
+                            </tr>
+            
+                            <!-- Daftar Event Modal -->
+                            <div class="modal fade" id="daftarEventModal-{{ $event->id }}" tabindex="-1" aria-labelledby="daftarEventModalLabel-{{ $event->id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="daftarEventModalLabel-{{ $event->id }}">Daftar Event</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form action="{{ route('events.daftar', $event->id) }}" method="POST">
+                                            @csrf
+                                            <div class="modal-body">
+                                                <p>Apakah Anda yakin ingin mendaftar event ini?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                                <button type="submit" class="btn btn-primary">Daftar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">Hasil Pemeriksaan</h6>
+            </div>
           <div class="card-body">
               <div class="table-responsive">
                   <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">

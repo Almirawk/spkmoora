@@ -18,10 +18,6 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['admin','pendonor'])->default('pendonor');
-            $table->string('alamat')->nullable();
-            $table->date('tanggal_lahir')->nullable();
-            $table->enum('jenis_kelamin', ['laki-laki', 'perempuan'])->nullable();
-            $table->string('no_telepon')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

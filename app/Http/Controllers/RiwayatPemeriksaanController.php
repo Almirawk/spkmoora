@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\Hasil;
 use Illuminate\Http\Request;
 use App\Models\Pendonor;
@@ -19,11 +20,12 @@ class RiwayatPemeriksaanController extends Controller
             
             if ($user->role != 'admin') {
                 $pendonor = $user->pendonor;
+                $events = Event::where('tanggal_selesai', '>=', now())->get();
                 $hasilPerhitungan = Hasil::where('pendonor_id', $pendonor->id)
                     ->orderByDesc('created_at')
                     ->get(); // Fetch all results for the logged-in donor
                 
-                return view('welcome', compact('hasilPerhitungan', 'user'));
+                return view('welcome', compact('hasilPerhitungan', 'user','events'));
             }
         }
         

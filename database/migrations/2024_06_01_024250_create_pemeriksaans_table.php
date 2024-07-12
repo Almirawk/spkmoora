@@ -14,10 +14,13 @@ return new class extends Migration
         Schema::create('pemeriksaans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('pendonor_id');
-            $table->foreign('pendonor_id')->references('id')->on('pendonors')->onDelete('cascade');
+            $table->unsignedBigInteger('event_id');
             $table->unsignedBigInteger('kriteria_id');
+            $table->string('nilai')->nullable();
+
+            $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');
+            $table->foreign('pendonor_id')->references('id')->on('pendonors')->onDelete('cascade');
             $table->foreign('kriteria_id')->references('id')->on('kriterias')->onDelete('cascade');
-            $table->string('nilai');
             $table->timestamps();
         });
         

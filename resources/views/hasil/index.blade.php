@@ -24,7 +24,7 @@
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <form id="jumlahTerpilihForm" action="{{ route('hasil') }}" method="GET">
+            <form id="jumlahTerpilihForm" action="{{ route('events.hasil',['eventId' => $eventId]) }}" method="GET">
                 @csrf
                 <div class="mb-3">
                     <label for="jumlah_terpilih" class="form-label">Jumlah Data Terpilih:</label>
@@ -41,7 +41,7 @@
                 @csrf
                 <div class="mb-3">
                     <label for="event_name" class="form-label">Nama Event:</label>
-                    <input type="text" id="event_name" name="event_name" class="form-control" required>
+                    <input type="text" id="event_name" name="event_name" class="form-control" readonly value="{{ $eventName }}" required>
                 </div>
                 <button type="submit" class="btn btn-primary btn-sm">
                     <i class="fas fa-save me-2"></i>Simpan Perhitungan

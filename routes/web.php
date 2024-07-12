@@ -7,6 +7,7 @@ use App\Http\Controllers\PendonorController;
 use App\Http\Controllers\KriteriaController;
 use App\Http\Controllers\PemeriksaanController;
 use App\Http\Controllers\DetailRiwayatController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfilController;
 use App\Models\Pemeriksaan;
 use App\Http\Controllers\RiwayatPemeriksaanController;
@@ -65,7 +66,13 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::get('/profil/edit', [ProfilController::class, 'edit'])->name('profil.edit');
-Route::put('/profil/update', [ProfilController::class, 'update'])->name('profil.update');
+    Route::put('/profil/update', [ProfilController::class, 'update'])->name('profil.update');
+    Route::resource('events', EventController::class);
+    Route::post('/events/daftar/{event}', [EventController::class, 'daftarEvent'])->name('events.daftar');
+    Route::get('/events/{id}/pemeriksaan', [EventController::class, 'pemeriksaan'])->name('events.pemeriksaan');
+    Route::get('/events/{eventId}/hasil', [HasilController::class, 'index'])->name('events.hasil');
+
+
 
     Route::prefix('pendonor')->group(function () {
         Route::get('', [PendonorController::class, 'index'])->name('pendonor');
@@ -75,7 +82,7 @@ Route::put('/profil/update', [ProfilController::class, 'update'])->name('profil.
         Route::post('update/{id}', [PendonorController::class, 'update'])->name('pendonor.update');
         Route::get('delete/{id}', [PendonorController::class, 'delete'])->name('pendonor.delete');
     });
- 
+
     Route::prefix('pemeriksaan')->group(function () {
         Route::get('', [PemeriksaanController::class, 'index'])->name('pemeriksaan');
         Route::get('insert', [PemeriksaanController::class, 'add'])->name('pemeriksaan.insert');
@@ -87,22 +94,16 @@ Route::put('/profil/update', [ProfilController::class, 'update'])->name('profil.
         Route::post('/nilai/update', [PemeriksaanController::class, 'updateNilai'])->name('nilai.update');
         // Route::delete('/pendonor/{id}', [PendonorController::class, 'destroy'])->name('pendonor.destroy');
         Route::post('/reset', [PemeriksaanController::class, 'reset'])->name('reset');
-
-
     });
 
     Route::delete('/pemeriksaan/{pendonor}', [PemeriksaanController::class, 'destroy'])->name('pemeriksaan.destroy');
 
 
     Route::prefix('hasil')->group(function () {
-        Route::get('', [HasilController::class, 'index'])->name('hasil');
-        Route::post('/hasil/simpan', [HasilController::class,'simpan'])->name('hasil.simpan');
-        Route::get('/riwayat', [HasilController::class,'riwayat'])->name('riwayat');
+        Route::post('/hasil/simpan', [HasilController::class, 'simpan'])->name('hasil.simpan');
+        Route::get('/riwayat', [HasilController::class, 'riwayat'])->name('riwayat');
         Route::get('/riwayat/pdf/{datetime}', [HasilController::class, 'generateRiwayatPdf'])->name('riwayat.pdf');
         Route::get('/riwayat/detail/{datetime}', [HasilController::class, 'detailRiwayat'])->name('riwayat.detail');
         Route::get('riwayat/{id}', [DetailRiwayatController::class, 'show'])->name('riwayat.show');
-
     });
-
 });
-

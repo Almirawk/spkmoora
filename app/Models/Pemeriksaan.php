@@ -10,11 +10,17 @@ class Pemeriksaan extends Model
     use HasFactory;
 
     protected $fillable = [
+        'event_id',
         'pendonor_id',
         'kriteria_id',
         'nilai',
     ];
 
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
+    }
     public function pendonor()
     {
         return $this->belongsTo(Pendonor::class);

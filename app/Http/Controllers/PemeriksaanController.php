@@ -61,7 +61,7 @@ class PemeriksaanController extends Controller
             }
         }
 
-        return redirect()->route('pemeriksaan')->with('message', 'Nilai berhasil diupdate.');
+        return redirect()->back()->with('message', 'Nilai berhasil diupdate.');
     }
 
     public function destroy($id)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\Hasil;
 use App\Models\Kriteria;
 use App\Models\Pendonor;
@@ -19,11 +20,14 @@ class HasilController extends Controller
         $this->middleware('web');
     }
 
-    public function index(Request $request)
+    public function index(Request $request, $eventId)
 {
-    $pendonors = Pendonor::all();
+    $pendonors = Pendonor::whereHas('pemeriksaans', function ($query) use ($eventId) {
+        $query->where('event_id', $eventId);
+    })->get();
+
     $kriterias = Kriteria::all();
-    $pemeriksaans = Pemeriksaan::all();
+    $pemeriksaans = Pemeriksaan::where('event_id', $eventId)->get();
 
     $bobot = $kriterias->pluck('bobot', 'id')->toArray();
     $namaKriterias = $kriterias->pluck('nama', 'id')->toArray();
@@ -83,7 +87,9 @@ class HasilController extends Controller
 
     session(['hasilAkhir' => $hasilAkhir]);
 
-    return view('hasil.index', compact('hasilAkhir'));
+    $eventName = Event::where('id', $eventId)->first()->nama ?? 'N/A';
+
+    return view('hasil.index', compact('hasilAkhir','eventId','eventName'));
 }
 
 

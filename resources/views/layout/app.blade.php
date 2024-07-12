@@ -103,20 +103,25 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <li class="nav-item {{ Request::route()->getName() == 'pemeriksaan' ? 'active' : '' }}">
+            <li class="nav-item {{ Request::route()->getName() == 'events' ? 'active' : '' }}">
+                <a class="nav-link text-danger" href="{{route('events.index')}}">
+                    <i class="fas fa-fw fa-stethoscope" style="color: red;"></i>
+                    <span>Data events</span></a>
+            </li>
+            {{-- <li class="nav-item {{ Request::route()->getName() == 'pemeriksaan' ? 'active' : '' }}">
                 <a class="nav-link text-danger" href="{{route('pemeriksaan')}}">
                     <i class="fas fa-fw fa-stethoscope" style="color: red;"></i>
                     <span>Data Pemeriksaan</span></a>
-            </li>
+            </li> --}}
 
             <!-- Divider -->
             <hr class="sidebar-divider">
             
-            <li class="nav-item {{ Request::route()->getName() == 'hasil' ? 'active' : '' }}">
+            {{-- <li class="nav-item {{ Request::route()->getName() == 'hasil' ? 'active' : '' }}">
                 <a class="nav-link text-danger" href="{{route('hasil')}}">
                     <i class="fas fa-fw fa-file-alt" style="color: red;"></i>
                     <span>Hasil Perhitungan</span></a>
-            </li>
+            </li> --}}
             <li class="nav-item {{ Request::route()->getName() == 'riwayat' ? 'active' : '' }}">
                 <a class="nav-link text-danger" href="{{route('riwayat')}}">
                     <i class="fas fa-fw fa-history" style="color: red;"></i>
